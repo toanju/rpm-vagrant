@@ -1,0 +1,58 @@
+diff --git a/lib/vagrant/bundler.rb b/lib/vagrant/bundler.rb
+index 05867da..ea8c056 100644
+--- a/lib/vagrant/bundler.rb
++++ b/lib/vagrant/bundler.rb
+@@ -188,7 +188,7 @@ module Vagrant
+           gemfile.puts(%Q[source "#{source}"])
+         end
+ 
+-        gemfile.puts(%Q[gem "vagrant", "= #{VERSION}"])
++        gemfile.puts(%Q[gemspec :path => "#{File.expand_path '../../..', __FILE__}"])
+ 
+         gemfile.puts("group :plugins do")
+         plugins.each do |name, plugin|
+diff --git a/vagrant.gemspec b/vagrant.gemspec
+index c4131b2..4fd9d68 100644
+--- a/vagrant.gemspec
++++ b/vagrant.gemspec
+@@ -15,7 +15,8 @@ Gem::Specification.new do |s|
+   s.required_rubygems_version = ">= 1.3.6"
+   s.rubyforge_project         = "vagrant"
+ 
+-  s.add_dependency "bundler", ">= 1.5.2", "< 1.7.0"
++  # https://github.com/mitchellh/vagrant/issues/4500
++  s.add_dependency "bundler", ">= 1.5.2", "!= 1.7.0"
+   s.add_dependency "childprocess", "~> 0.5.0"
+   s.add_dependency "erubis", "~> 2.7.0"
+   s.add_dependency "i18n", "~> 0.6.0"
+@@ -23,19 +24,18 @@ Gem::Specification.new do |s|
+   s.add_dependency "hashicorp-checkpoint", "~> 0.1.1"
+   s.add_dependency "log4r", "~> 1.1.9", "< 1.1.11"
+   s.add_dependency "net-ssh", ">= 2.6.6", "< 2.10.0"
+-  s.add_dependency "net-scp", "~> 1.1.0"
+-  s.add_dependency "rb-kqueue", "~> 0.2.0"
+-  s.add_dependency "wdm", "~> 0.1.0"
+-  s.add_dependency "winrm", "~> 1.1.3"
++  s.add_dependency "net-scp", ">= 1.1.0"
++  #s.add_dependency "rb-kqueue", "~> 0.2.0"
++  #s.add_dependency "wdm", "~> 0.1.0"
++  #s.add_dependency "winrm", "~> 1.1.3"
++  s.add_dependency "nokogiri"
++  s.add_dependency "json"
+ 
+-  # We lock this down to avoid compilation issues.
+-  s.add_dependency "nokogiri", "= 1.6.3.1"
+-
+-  s.add_development_dependency "rake"
+-  s.add_development_dependency "contest", ">= 0.1.2"
+-  s.add_development_dependency "minitest", "~> 2.5.1"
+-  s.add_development_dependency "mocha"
+-  s.add_development_dependency "rspec", "~> 2.14.0"
++  #s.add_development_dependency "rake"
++  #s.add_development_dependency "contest", ">= 0.1.2"
++  #s.add_development_dependency "minitest", "~> 2.5.1"
++  #s.add_development_dependency "mocha"
++  #s.add_development_dependency "rspec", "~> 2.14.0"
+ 
+   # The following block of code determines the files that should be included
+   # in the gem. It does this by reading all the files in the directory where

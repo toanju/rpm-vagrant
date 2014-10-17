@@ -40,10 +40,12 @@ Patch1: vagrant-1.6.5-fix-dependencies.patch
 # English locales for registration of system-installed plugins
 Patch2: vagrant-1.6.5-locales.patch
 
+Patch100: vagrant-1.6.5.patch
+
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
 Requires: rubygem(bundler) >= 1.5.2
-Requires: rubygem(json_pure)
+#Requires: rubygem(json_pure)
 Requires: rubygem(hashicorp-checkpoint) >= 0.1.1
 Requires: rubygem(childprocess) >= 0.5.0
 Requires: rubygem(erubis) >= 2.7.0
@@ -52,15 +54,15 @@ Requires: rubygem(listen) >= 2.7.1
 Requires: rubygem(log4r)
 Requires: rubygem(net-ssh) >= 2.6.6
 Requires: rubygem(net-scp) >= 1.1.0
-Requires: bsdtar
-Requires: curl
-Requires: libffi
-Requires: libxml2
-Requires: libxslt
-Requires: libyaml
-Requires: openssl
-Requires: zlib
-Requires: ca-certificates
+#Requires: bsdtar
+#Requires: curl
+#Requires: libffi
+#Requires: libxml2
+#Requires: libxslt
+#Requires: libyaml
+#Requires: openssl
+#Requires: zlib
+#Requires: ca-certificates
 # libvirt as a default provider
 #Requires: rubygem(vagrant-libvirt)
 
@@ -68,7 +70,7 @@ Requires: ca-certificates
 # installation from upstream gem is seemless)
 #Requires: rubygem(fog) >= 1.15
 #Requires: rubygem(fog) < 2
-#Requires: rubygem(nokogiri) >= 1.6
+Requires: rubygem(nokogiri) >= 1.6
 #Requires: rubygem(nokogiri) < 1.7
 #Requires: rubygem(ruby-libvirt) >= 0.4.0
 #Requires: rubygem(ruby-libvirt) < 0.5.0
@@ -113,6 +115,9 @@ Documentation for %{name}.
 
 %prep
 %setup -q
+
+%patch100 -p1
+
 #gem unpack %{SOURCE0}
 #
 #%setup -q -D -T -n  %{gem_name}-%{version}
@@ -136,9 +141,6 @@ Documentation for %{name}.
 #%%patch3 -p1
 
 %build
-gem build %{gem_name}.gemspec
-
-%gem_install
 
 %install
 mkdir -p %{buildroot}%{_datadir}/%{gem_name}
@@ -147,6 +149,9 @@ cp -pa ./* \
 
 
 find %{buildroot}%{_datadir}/%{gem_name}/bin -type f | xargs chmod a+x
+
+# The .gemspec search for .gitignore. May be the .gemspec should be adjusted.
+touch %{buildroot}%{_datadir}/%{gem_name}/.gitignore
 
 
         # gemfile.puts(%Q[gemspec :path => "#{File.expand_path '../../..', __FILE__}"])
@@ -157,6 +162,7 @@ find %{buildroot}%{_datadir}/%{gem_name}/bin -type f | xargs chmod a+x
 # something upstream uses for their package
 mkdir -p %{buildroot}%{_bindir}
 cat %{SOURCE1} > %{buildroot}%{_bindir}/vagrant
+chmod a+x %{buildroot}%{_bindir}/vagrant
 #mkdir -p %{buildroot}/etc/pki/tls
 #cat %{SOURCE2} > %{buildroot}/etc/pki/tls/vagrant-cacert.pem
 
@@ -215,7 +221,7 @@ echo "{}" > %{buildroot}/etc/vagrant/plugins.json
 getent group vagrant >/dev/null || groupadd -r vagrant
  
 %post
-vagrant plugin register vagrant-libvirt >/dev/null || :
+#vagrant plugin register vagrant-libvirt >/dev/null || :
 
 %files
 %{_datadir}/%{gem_name}
