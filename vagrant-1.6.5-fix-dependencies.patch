@@ -1,3 +1,16 @@
+diff --git a/bin/vagrant b/bin/vagrant
+index 21630e1..4fc6b96 100755
+--- a/bin/vagrant
++++ b/bin/vagrant
+@@ -15,7 +15,7 @@ end
+ 
+ # Fast path the version of Vagrant
+ if argv.include?("-v") || argv.include?("--version")
+-  require "vagrant/version"
++  require_relative "../lib/vagrant/version"
+   puts "Vagrant #{Vagrant::VERSION}"
+   exit 0
+ end
 diff --git a/lib/vagrant/bundler.rb b/lib/vagrant/bundler.rb
 index 05867da..ea8c056 100644
 --- a/lib/vagrant/bundler.rb
