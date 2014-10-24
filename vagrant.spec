@@ -92,13 +92,6 @@ Documentation for %{name}.
 
 %patch0 -p1
 
-#sed -i '/dependency/ d' %{name}.gemspec
-
-# Add missing dependencies
-# These needs to be part of .gemspec so Bundler works as expected
-#sed -i -e "72i s\.add_dependency(\%q<json>)" %{name}.gemspec
-#sed -i -e "72i s\.add_dependency(\%q<json_pure>)" %{name}.gemspec
-
 %build
 
 %install
