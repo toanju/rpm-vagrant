@@ -30,7 +30,7 @@ Requires: rubygem(log4r)
 Requires: rubygem(net-ssh) >= 2.6.6
 Requires: rubygem(net-scp) >= 1.1.0
 Requires: bsdtar
-#Requires: curl
+Requires: curl
 #Requires: libffi
 #Requires: libxml2
 #Requires: libxslt
