@@ -18,7 +18,7 @@ Patch0: vagrant-1.6.5-fix-dependencies.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
-# Vagrant does not work with JRuby ATM.
+# Explicitly specify MRI, since Vagrant does not work with JRuby ATM.
 Requires: ruby
 Requires: rubygem(bundler) >= 1.5.2
 Requires: rubygem(hashicorp-checkpoint) >= 0.1.1
