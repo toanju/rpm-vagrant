@@ -1,12 +1,14 @@
 diff --git a/bin/vagrant b/bin/vagrant
-index 21630e1..4fc6b96 100755
+index 21630e1..ac28e04 100755
 --- a/bin/vagrant
 +++ b/bin/vagrant
-@@ -15,7 +15,7 @@ end
+@@ -15,7 +15,9 @@ end
  
  # Fast path the version of Vagrant
  if argv.include?("-v") || argv.include?("--version")
 -  require "vagrant/version"
++  # Fixes non-gemified Vagrant to display the version.
++  # https://github.com/mitchellh/vagrant/pull/4703
 +  require_relative "../lib/vagrant/version"
    puts "Vagrant #{Vagrant::VERSION}"
    exit 0
