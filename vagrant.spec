@@ -20,6 +20,9 @@ Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
 # Explicitly specify MRI, since Vagrant does not work with JRuby ATM.
 Requires: ruby
+# rb-inotify should be installed by listen, but this dependency was removed
+# in Fedora's package.
+Requires: rubygem(rb-inotify)
 Requires: rubygem(bundler) >= 1.5.2
 Requires: rubygem(hashicorp-checkpoint) >= 0.1.1
 Requires: rubygem(childprocess) >= 0.5.0
