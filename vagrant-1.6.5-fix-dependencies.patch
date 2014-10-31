@@ -43,7 +43,7 @@ index 8756fc3..7fb2be8 100644
  
          return [options, subprocess_options]
 diff --git a/vagrant.gemspec b/vagrant.gemspec
-index c4131b2..48b27fb 100644
+index c4131b2..4fd9d68 100644
 --- a/vagrant.gemspec
 +++ b/vagrant.gemspec
 @@ -15,7 +15,8 @@ Gem::Specification.new do |s|
@@ -56,7 +56,7 @@ index c4131b2..48b27fb 100644
    s.add_dependency "childprocess", "~> 0.5.0"
    s.add_dependency "erubis", "~> 2.7.0"
    s.add_dependency "i18n", "~> 0.6.0"
-@@ -23,19 +24,21 @@ Gem::Specification.new do |s|
+@@ -23,19 +24,19 @@ Gem::Specification.new do |s|
    s.add_dependency "hashicorp-checkpoint", "~> 0.1.1"
    s.add_dependency "log4r", "~> 1.1.9", "< 1.1.11"
    s.add_dependency "net-ssh", ">= 2.6.6", "< 2.10.0"
@@ -70,8 +70,6 @@ index c4131b2..48b27fb 100644
 +  #s.add_dependency "winrm", "~> 1.1.3"
 +  s.add_dependency "nokogiri"
 +  s.add_dependency "json"
-+  s.add_dependency "thor"
-+  s.add_dependency "net-http-persistent"
 +  s.add_dependency "rb-inotify"
  
 -  # We lock this down to avoid compilation issues.
