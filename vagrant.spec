@@ -14,6 +14,8 @@ Source0: https://github.com/mitchellh/%{name}/archive/v%{version}/%{name}-%{vers
 # Upstream binstub with adjusted paths, the offical way how to run vagrant
 Source1: binstub
 
+Source2: https://github.com/mitchellh/%{name}-spec/archive/master/%{name}-spec.tar.gz
+
 Patch0: vagrant-1.6.5-fix-dependencies.patch
 
 Requires: ruby(release)
@@ -51,8 +53,9 @@ Requires: rubygem(nokogiri) >= 1.6
 #Requires(pre): shadow-utils
 
 # For tests
+BuildRequires: bsdtar
 #BuildRequires: rubygem(listen) >= 2.7.1
-#BuildRequires: rubygem(childprocess) >= 0.5.0
+BuildRequires: rubygem(childprocess) >= 0.5.0
 #BuildRequires: rubygem(net-ssh) >= 2.6.6
 #BuildRequires: rubygem(net-ssh) < 2.10
 #BuildRequires: rubygem(net-scp) >= 1.1.0
@@ -60,9 +63,10 @@ Requires: rubygem(nokogiri) >= 1.6
 #BuildRequires: rubygem(i18n) >= 0.6.0
 #BuildRequires: rubygem(erubis) >= 2.7.0
 
-#BuildRequires: rubygem(minitest)
-#BuildRequires: rubygem(rspec)
-#BuildRequires: rubygem(mocha)
+BuildRequires: rubygem(minitest)
+BuildRequires: rubygem(rb-inotify)
+BuildRequires: rubygem(rspec)
+BuildRequires: rubygem(mocha)
 #BuildRequires: rubygem(bundler)
 #BuildRequires: ruby-devel
 #BuildRequires: git
@@ -128,18 +132,28 @@ install -d -m 755 %{buildroot}%{_sharedstatedir}/%{name}
 #sed -i -e "2irequire 'nokogiri'" %{buildroot}%{gem_instdir}/bin/vagrant
 #sed -i -e "3irequire 'libvirt'" %{buildroot}%{gem_instdir}/bin/vagrant
 
-#%%check
-#pushd .%{gem_instdir}
-#gem install log4r --version 1.1.10 -N
-#gem install wdm -N
-#gem install winrm -N
-#gem install rb-kqueue -N
-#gem install listen --version 2.7.1 -N
-#gem install childprocess --version 0.5.0 -N
-#bundle install
-#rm -rf ./test/unit/vagrant/plugin/
-#ruby -rbundler -I.:test:lib -e 'Dir.glob "test/unit/vagrant/*_test.rb", &method(:require)'
-#popd
+%check
+# Unpack the vagran-spec and adjust the directory name.
+tar xvzf %{S:2} -C ..
+mv ../vagrant-spec{-master,}
+
+# Remove the git reference, which is useless in our case.
+sed -i '/git/ s/^/#/' ../vagrant-spec/vagrant-spec.gemspec
+
+# Re-enable development dependencies for tests ...
+sed -i '/development/ s/#//' vagrant.gemspec
+# ... except contest which is not in Fedora yet.
+sed -i '/contest/ s/^/#/' vagrant.gemspec
+
+# TODO: winrm is not in Fedora yet.
+rm -rf test/unit/plugins/communicators/winrm
+sed -i '/it "eager loads WinRM" do/,/^      end$/ s/^/#/' test/unit/vagrant/machine_test.rb
+sed -i '/it "should return the specified communicator if given" do/,/^    end$/ s/^/#/' test/unit/vagrant/machine_test.rb
+
+bundle --local
+
+# Test suite must be executed in order.
+ruby -rbundler/setup -I.:lib -e 'Dir.glob("test/unit/**/*_test.rb").sort.each &method(:require)'
 
 %pre
 getent group vagrant >/dev/null || groupadd -r vagrant

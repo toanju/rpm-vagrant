@@ -43,7 +43,7 @@ index 8756fc3..7fb2be8 100644
  
          return [options, subprocess_options]
 diff --git a/vagrant.gemspec b/vagrant.gemspec
-index c4131b2..502f0cd 100644
+index c4131b2..d06558a 100644
 --- a/vagrant.gemspec
 +++ b/vagrant.gemspec
 @@ -15,27 +15,32 @@ Gem::Specification.new do |s|
@@ -85,7 +85,7 @@ index c4131b2..502f0cd 100644
 +
 +  #s.add_development_dependency "rake"
 +  #s.add_development_dependency "contest", ">= 0.1.2"
-+  #s.add_development_dependency "minitest", "~> 2.5.1"
++  #s.add_development_dependency "minitest"
 +  #s.add_development_dependency "mocha"
 +  #s.add_development_dependency "rspec", "~> 2.14.0"
  
