@@ -34,13 +34,6 @@ Requires: rubygem(net-ssh) >= 2.6.6
 Requires: rubygem(net-scp) >= 1.1.0
 Requires: bsdtar
 Requires: curl
-#Requires: libffi
-#Requires: libxml2
-#Requires: libxslt
-#Requires: libyaml
-#Requires: openssl
-#Requires: zlib
-#Requires: ca-certificates
 # libvirt as a default provider
 #Requires: rubygem(vagrant-libvirt)
 
