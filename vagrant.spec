@@ -63,10 +63,8 @@ BuildRequires: rubygem(childprocess) >= 0.5.0
 #BuildRequires: rubygem(i18n) >= 0.6.0
 #BuildRequires: rubygem(erubis) >= 2.7.0
 
-BuildRequires: rubygem(minitest)
 BuildRequires: rubygem(rb-inotify)
 BuildRequires: rubygem(rspec)
-BuildRequires: rubygem(mocha)
 #BuildRequires: rubygem(bundler)
 #BuildRequires: ruby-devel
 #BuildRequires: git
