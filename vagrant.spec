@@ -126,11 +126,6 @@ install -d -m 755 %{buildroot}%{_sharedstatedir}/%{name}
 #sed -i -e "s|If all else fails, return VirtualBox|If all else fails, return libvirt|" %{buildroot}%{gem_instdir}/lib/vagrant/environment.rb
 #sed -i -e "s|return :virtualbox|return :libvirt|" %{buildroot}%{gem_instdir}/lib/vagrant/environment.rb
 
-# Temporal fix for Vagrant not seeing the extensions
-# Let's require them sooner
-#sed -i -e "2irequire 'nokogiri'" %{buildroot}%{gem_instdir}/bin/vagrant
-#sed -i -e "3irequire 'libvirt'" %{buildroot}%{gem_instdir}/bin/vagrant
-
 %check
 # Unpack the vagran-spec and adjust the directory name.
 tar xvzf %{S:2} -C ..
