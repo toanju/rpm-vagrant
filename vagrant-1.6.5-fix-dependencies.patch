@@ -63,6 +63,18 @@ index 8756fc3..7fb2be8 100644
          end
  
          return [options, subprocess_options]
+diff --git a/test/unit/base.rb b/test/unit/base.rb
+index 3020c7b..c7b11b9 100644
+--- a/test/unit/base.rb
++++ b/test/unit/base.rb
+@@ -28,7 +28,6 @@ $stderr.sync = true
+ 
+ # Configure RSpec
+ RSpec.configure do |c|
+-  c.expect_with :rspec, :stdlib
+   c.treat_symbols_as_metadata_keys_with_true_values = true
+ 
+   if Vagrant::Util::Platform.windows?
 diff --git a/vagrant.gemspec b/vagrant.gemspec
 index c4131b2..d053f22 100644
 --- a/vagrant.gemspec
