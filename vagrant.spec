@@ -54,18 +54,19 @@ Requires: rubygem(nokogiri) >= 1.6
 
 # For tests
 BuildRequires: bsdtar
-#BuildRequires: rubygem(listen) >= 2.7.1
-BuildRequires: rubygem(childprocess) >= 0.5.0
-#BuildRequires: rubygem(net-ssh) >= 2.6.6
-#BuildRequires: rubygem(net-ssh) < 2.10
-#BuildRequires: rubygem(net-scp) >= 1.1.0
-#BuildRequires: rubygem(net-scp) < 1.2
-#BuildRequires: rubygem(i18n) >= 0.6.0
-#BuildRequires: rubygem(erubis) >= 2.7.0
+BuildRequires: rubygem(listen)
+BuildRequires: rubygem(childprocess)
+BuildRequires: rubygem(hashicorp-checkpoint)
+BuildRequires: rubygem(log4r)
+BuildRequires: rubygem(net-ssh)
+BuildRequires: rubygem(net-scp)
+BuildRequires: rubygem(nokogiri)
+BuildRequires: rubygem(i18n)
+BuildRequires: rubygem(erubis)
 
 BuildRequires: rubygem(rb-inotify)
 BuildRequires: rubygem(rspec)
-#BuildRequires: rubygem(bundler)
+BuildRequires: rubygem(bundler)
 #BuildRequires: ruby-devel
 #BuildRequires: git
 BuildRequires: pkgconfig(bash-completion)
