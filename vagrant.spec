@@ -140,11 +140,6 @@ mv ../vagrant-spec{-master,}
 # Remove the git reference, which is useless in our case.
 sed -i '/git/ s/^/#/' ../vagrant-spec/vagrant-spec.gemspec
 
-# Re-enable development dependencies for tests ...
-sed -i '/development/ s/#//' vagrant.gemspec
-# ... except contest which is not in Fedora yet.
-sed -i '/contest/ s/^/#/' vagrant.gemspec
-
 # TODO: winrm is not in Fedora yet.
 rm -rf test/unit/plugins/communicators/winrm
 sed -i '/it "eager loads WinRM" do/,/^      end$/ s/^/#/' test/unit/vagrant/machine_test.rb
