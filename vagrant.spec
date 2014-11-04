@@ -67,8 +67,6 @@ BuildRequires: rubygem(erubis)
 BuildRequires: rubygem(rb-inotify)
 BuildRequires: rubygem(rspec)
 BuildRequires: rubygem(bundler)
-#BuildRequires: ruby-devel
-#BuildRequires: git
 BuildRequires: pkgconfig(bash-completion)
 BuildArch: noarch
 
@@ -116,15 +114,6 @@ install -D -m 0644 %{buildroot}%{vagrant_dir}/contrib/bash/completion.sh \
 
 # create the global home dir
 install -d -m 755 %{buildroot}%{_sharedstatedir}/%{name}
-#echo "{}" > %{buildroot}%{_sharedstatedir}/%{name}/plugins.json
-
-## Fix getting the SSL cert path for the downloader
-#sed -i -e "s/downloader_options\[:ca_cert\] = env\[:box_download_ca_cert\]/downloader_options\[:ca_cert\] = (env\[:box_download_ca_cert\] || ENV\['SSL_CERT_FILE'\])/" %{buildroot}%{gem_instdir}/lib/vagrant/action/builtin/box_add.rb
-
-
-# libvirt as a default
-#sed -i -e "s|If all else fails, return VirtualBox|If all else fails, return libvirt|" %{buildroot}%{gem_instdir}/lib/vagrant/environment.rb
-#sed -i -e "s|return :virtualbox|return :libvirt|" %{buildroot}%{gem_instdir}/lib/vagrant/environment.rb
 
 %check
 # Unpack the vagran-spec and adjust the directory name.
