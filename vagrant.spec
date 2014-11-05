@@ -2,6 +2,8 @@
 %global vagrant_dir %{_datadir}/%{name}
 %global vagrant_plugin_dir %{_sharedstatedir}/%{name}
 
+%global vagrant_spec_commit c0dafc996165bf1628b672dd533f1858ff66fe4a
+
 Name: vagrant
 Version: 1.6.5
 Release: 11%{?dist}
@@ -14,7 +16,9 @@ Source0: https://github.com/mitchellh/%{name}/archive/v%{version}/%{name}-%{vers
 # Upstream binstub with adjusted paths, the offical way how to run vagrant
 Source1: binstub
 
-Source2: https://github.com/mitchellh/%{name}-spec/archive/master/%{name}-spec.tar.gz
+# The library has no official release yet. But since it is just test
+# dependency, it should be fine to include the source right here.
+Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit}/%{name}-spec-%{vagrant_spec_commit}.tar.gz
 
 Patch0: vagrant-1.6.5-fix-dependencies.patch
 
@@ -107,7 +111,7 @@ install -d -m 755 %{buildroot}%{_sharedstatedir}/%{name}
 %check
 # Unpack the vagran-spec and adjust the directory name.
 tar xvzf %{S:2} -C ..
-mv ../vagrant-spec{-master,}
+mv ../vagrant-spec{-%{vagrant_spec_commit},}
 
 # Remove the git reference, which is useless in our case.
 sed -i '/git/ s/^/#/' ../vagrant-spec/vagrant-spec.gemspec
