@@ -34,25 +34,15 @@ Requires: rubygem(listen) >= 2.7.1
 Requires: rubygem(log4r)
 Requires: rubygem(net-ssh) >= 2.6.6
 Requires: rubygem(net-scp) >= 1.1.0
+Requires: rubygem(nokogiri) >= 1.6
 Requires: bsdtar
 Requires: curl
 # libvirt as a default provider
 #Requires: rubygem(vagrant-libvirt)
 
-# Vagrant libvirt requires (just for the time beeing so that plugin
-# installation from upstream gem is seemless)
-#Requires: rubygem(fog) >= 1.15
-#Requires: rubygem(fog) < 2
-Requires: rubygem(nokogiri) >= 1.6
-#Requires: rubygem(nokogiri) < 1.7
-#Requires: rubygem(ruby-libvirt) >= 0.4.0
-#Requires: rubygem(ruby-libvirt) < 0.5.0
-#Requires: rubygem(json) = 1.8.1
-#Requires: rubygem(ffi) = 1.9.3
 #Requires: polkit-pkla-compat
 #Requires(pre): shadow-utils
 
-# For tests
 BuildRequires: bsdtar
 BuildRequires: rubygem(listen)
 BuildRequires: rubygem(childprocess)
@@ -63,7 +53,6 @@ BuildRequires: rubygem(net-scp)
 BuildRequires: rubygem(nokogiri)
 BuildRequires: rubygem(i18n)
 BuildRequires: rubygem(erubis)
-
 BuildRequires: rubygem(rb-inotify)
 BuildRequires: rubygem(rspec)
 BuildRequires: rubygem(bundler)
