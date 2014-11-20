@@ -58,7 +58,7 @@ BuildRequires: rubygem(nokogiri)
 BuildRequires: rubygem(i18n)
 BuildRequires: rubygem(erubis)
 BuildRequires: rubygem(rb-inotify)
-BuildRequires: rubygem(rspec)
+BuildRequires: rubygem(rspec) < 3
 BuildRequires: rubygem(bundler)
 BuildRequires: pkgconfig(bash-completion)
 BuildArch: noarch
