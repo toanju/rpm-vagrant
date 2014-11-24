@@ -92,8 +92,8 @@ cp -pa ./* \
 
 find %{buildroot}%{vagrant_dir}/bin -type f | xargs chmod a+x
 
-# TODO: The .gemspec search for .gitignore. May be the .gemspec should be adjusted.
-touch %{buildroot}%{vagrant_dir}/.gitignore
+rm %{buildroot}%{vagrant_dir}/{CHANGELOG,CONTRIBUTING,README}.md
+rm %{buildroot}%{vagrant_dir}/LICENSE
 
 # Provide executable similar to upstream:
 # https://github.com/mitchellh/vagrant-installers/blob/master/substrate/modules/vagrant_installer/templates/vagrant.erb
@@ -130,13 +130,35 @@ ruby -rbundler/setup -I.:lib -e 'Dir.glob("test/unit/**/*_test.rb").sort.each &m
 getent group vagrant >/dev/null || groupadd -r vagrant
  
 %files
-%{_datadir}/%{name}
+%license LICENSE
 %{_bindir}/%{name}
+%dir %{vagrant_dir}
+%exclude %{vagrant_dir}/.*
+%exclude %{vagrant_dir}/Vagrantfile
+%{vagrant_dir}/bin
+# TODO: Make more use of contribs.
+%{vagrant_dir}/contrib
+%exclude %{vagrant_dir}/contrib/bash
+%{vagrant_dir}/vagrant.gemspec
+%{vagrant_dir}/keys
+%{vagrant_dir}/lib
+%{vagrant_dir}/plugins
+%exclude %{vagrant_dir}/scripts
+%{vagrant_dir}/templates
+%{vagrant_dir}/version.txt
+%exclude %{vagrant_dir}/website
 %{bashcompletion_dir}/%{name}
 %dir %{_sharedstatedir}/%{name}
 %ghost %{_sharedstatedir}/%{name}/plugins.json
 
 %files doc
+%doc CONTRIBUTING.md CHANGELOG.md README.md
+%{vagrant_dir}/Gemfile
+%{vagrant_dir}/Rakefile
+%{vagrant_dir}/tasks
+%{vagrant_dir}/test
+%{vagrant_dir}/vagrant-spec.config.example.rb
+
 
 %changelog
 * Wed Oct 22 2014 Vít Ondruch <vondruch@redhat.com> - 1.6.5-11

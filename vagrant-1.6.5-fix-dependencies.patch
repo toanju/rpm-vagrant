@@ -55,7 +55,7 @@ index 3020c7b..c7b11b9 100644
  
    if Vagrant::Util::Platform.windows?
 diff --git a/vagrant.gemspec b/vagrant.gemspec
-index c4131b2..0d7f8d6 100644
+index c4131b2..638aeb4 100644
 --- a/vagrant.gemspec
 +++ b/vagrant.gemspec
 @@ -15,27 +15,38 @@ Gem::Specification.new do |s|
@@ -109,3 +109,33 @@ index c4131b2..0d7f8d6 100644
  
    # The following block of code determines the files that should be included
    # in the gem. It does this by reading all the files in the directory where
+@@ -46,10 +57,10 @@ Gem::Specification.new do |s|
+   all_files      = Dir.chdir(root_path) { Dir.glob("**/{*,.*}") }
+   all_files.reject! { |file| [".", ".."].include?(File.basename(file)) }
+   all_files.reject! { |file| file.start_with?("website/") }
+-  gitignore_path = File.join(root_path, ".gitignore")
+-  gitignore      = File.readlines(gitignore_path)
+-  gitignore.map!    { |line| line.chomp.strip }
+-  gitignore.reject! { |line| line.empty? || line =~ /^(#|!)/ }
++  #gitignore_path = File.join(root_path, ".gitignore")
++  #gitignore      = File.readlines(gitignore_path)
++  #gitignore.map!    { |line| line.chomp.strip }
++  #gitignore.reject! { |line| line.empty? || line =~ /^(#|!)/ }
+ 
+   unignored_files = all_files.reject do |file|
+     # Ignore any directories, the gemspec only cares about files
+@@ -63,10 +74,10 @@ Gem::Specification.new do |s|
+     #     like '.DS_Store' will match sub-directories too (same behavior
+     #     as git).
+     #
+-    gitignore.any? do |ignore|
+-      File.fnmatch(ignore, file, File::FNM_PATHNAME) ||
+-        File.fnmatch(ignore, File.basename(file), File::FNM_PATHNAME)
+-    end
++    #gitignore.any? do |ignore|
++    #  File.fnmatch(ignore, file, File::FNM_PATHNAME) ||
++    #    File.fnmatch(ignore, File.basename(file), File::FNM_PATHNAME)
++    #end
+   end
+ 
+   s.files         = unignored_files
