@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.6.5
-Release: 13%{?dist}
+Release: 14%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -22,13 +22,11 @@ Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit
 # for RubyGems and Bundler are in place
 Source3: patches.rb
 
-Source4: macros.vagrant_plugin
-Source5: macros.vagrant
+Source4: macros.vagrant
 
 # The load directive is supported since RPM 4.12, i.e. F21+. The build process
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
-%{?load:%{SOURCE5}}
 
 Patch0: vagrant-1.6.5-fix-dependencies.patch
 
@@ -83,13 +81,6 @@ BuildArch: noarch
 %description doc
 Documentation for %{name}.
 
-%package devel
-Summary: Package shipping development files for Vagrant
-
-%description devel
-Package shipping macros for convinient plugin registration and
-unregistration.
-
 %prep
 %setup -q
 
@@ -127,8 +118,6 @@ sed -i -e "11irequire 'vagrant/patches'" %{buildroot}%{vagrant_dir}/lib/vagrant.
 # Install Vagrant macros
 mkdir -p %{buildroot}%{_rpmconfigdir}/macros.d/
 cp %{SOURCE4} %{buildroot}%{_rpmconfigdir}/macros.d/
-sed -i "s/%%{name}/%{name}/" %{buildroot}%{_rpmconfigdir}/macros.d/macros.%{name}_plugin
-cp %{SOURCE5} %{buildroot}%{_rpmconfigdir}/macros.d/
 sed -i "s/%%{name}/%{name}/" %{buildroot}%{_rpmconfigdir}/macros.d/macros.%{name}
 
 
@@ -174,7 +163,7 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 %{bashcompletion_dir}/%{name}
 %dir %{_sharedstatedir}/%{name}
 %ghost %{_sharedstatedir}/%{name}/plugins.json
-%{_rpmconfigdir}/macros.d/macros.%{name}_plugin
+%{_rpmconfigdir}/macros.d/macros.%{name}
 
 %files doc
 %doc CONTRIBUTING.md CHANGELOG.md README.md
@@ -184,11 +173,11 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 %{vagrant_dir}/test
 %{vagrant_dir}/vagrant-spec.config.example.rb
 
-%files devel
-%{_rpmconfigdir}/macros.d/macros.%{name}
-
 
 %changelog
+* Wed Nov 26 2014 Vít Ondruch <vondruch@redhat.com> - 1.6.5-14
+- Drop -devel sub-package.
+
 * Tue Nov 25 2014 Josef Stribny <jstribny@redhat.com> - 1.6.5-13
 - Create -devel sub-package
 
