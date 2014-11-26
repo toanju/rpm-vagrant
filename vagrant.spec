@@ -53,7 +53,7 @@ Requires: curl
 #Requires: rubygem(vagrant-libvirt)
 
 #Requires: polkit-pkla-compat
-#Requires(pre): shadow-utils
+Requires(pre): shadow-utils
 
 BuildRequires: bsdtar
 BuildRequires: rubygem(listen)
