@@ -22,11 +22,13 @@ Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit
 # for RubyGems and Bundler are in place
 Source3: patches.rb
 
-Source4: macros.vagrant
+Source4: macros.vagrant_plugin
+Source5: macros.vagrant
 
 # The load directive is supported since RPM 4.12, i.e. F21+. The build process
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
+%{?load:%{SOURCE5}}
 
 Patch0: vagrant-1.6.5-fix-dependencies.patch
 
@@ -125,6 +127,8 @@ sed -i -e "11irequire 'vagrant/patches'" %{buildroot}%{vagrant_dir}/lib/vagrant.
 # Install Vagrant macros
 mkdir -p %{buildroot}%{_rpmconfigdir}/macros.d/
 cp %{SOURCE4} %{buildroot}%{_rpmconfigdir}/macros.d/
+sed -i "s/%%{name}/%{name}/" %{buildroot}%{_rpmconfigdir}/macros.d/macros.%{name}_plugin
+cp %{SOURCE5} %{buildroot}%{_rpmconfigdir}/macros.d/
 sed -i "s/%%{name}/%{name}/" %{buildroot}%{_rpmconfigdir}/macros.d/macros.%{name}
 
 
@@ -170,6 +174,7 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 %{bashcompletion_dir}/%{name}
 %dir %{_sharedstatedir}/%{name}
 %ghost %{_sharedstatedir}/%{name}/plugins.json
+%{_rpmconfigdir}/macros.d/macros.%{name}_plugin
 
 %files doc
 %doc CONTRIBUTING.md CHANGELOG.md README.md
