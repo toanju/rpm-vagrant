@@ -10,18 +10,14 @@ Group: Development/Languages
 License: MIT
 URL: http://vagrantup.com
 Source0: https://github.com/mitchellh/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
-
 # Upstream binstub with adjusted paths, the offical way how to run vagrant
 Source1: binstub
-
 # The library has no official release yet. But since it is just test
 # dependency, it should be fine to include the source right here.
 Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit}/%{name}-spec-%{vagrant_spec_commit}.tar.gz
-
 # Monkey-patching needed for Vagrant to work until the respective patches
 # for RubyGems and Bundler are in place
 Source3: patches.rb
-
 Source4: macros.vagrant
 
 # The load directive is supported since RPM 4.12, i.e. F21+. The build process
