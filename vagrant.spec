@@ -6,7 +6,7 @@
 
 Name: vagrant
 Version: 1.6.5
-Release: 11%{?dist}
+Release: 12%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -19,6 +19,10 @@ Source1: binstub
 # The library has no official release yet. But since it is just test
 # dependency, it should be fine to include the source right here.
 Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit}/%{name}-spec-%{vagrant_spec_commit}.tar.gz
+
+# Monkey-patching needed for Vagrant to work until the respective patches
+# for RubyGems and Bundler are in place
+Source3: patches.rb
 
 Patch0: vagrant-1.6.5-fix-dependencies.patch
 
@@ -108,6 +112,11 @@ install -D -m 0644 %{buildroot}%{vagrant_dir}/contrib/bash/completion.sh \
 # create the global home dir
 install -d -m 755 %{buildroot}%{vagrant_plugin_dir}
 
+# Install the monkey-patch file and load it from Vagrant after loading RubyGems
+cp %{SOURCE3}  %{buildroot}%{vagrant_dir}/lib/vagrant
+sed -i -e "11irequire 'vagrant/patches'" %{buildroot}%{vagrant_dir}/lib/vagrant.rb
+
+
 %check
 # Unpack the vagran-spec and adjust the directory name.
 tar xvzf %{S:2} -C ..
@@ -161,6 +170,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Mon Nov 24 2014 Josef Stribny <jstribny@redhat.com> - 1.6.5-12
+- Include monkey-patching for RubyGems and Bundler for now
+
 * Wed Oct 22 2014 Vít Ondruch <vondruch@redhat.com> - 1.6.5-11
 - Make vagrant non-rubygem package.
 
