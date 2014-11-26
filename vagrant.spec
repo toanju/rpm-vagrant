@@ -1,6 +1,4 @@
 %global bashcompletion_dir %(pkg-config --variable=completionsdir bash-completion 2> /dev/null || :)
-%global vagrant_dir %{_datadir}/%{name}
-%global vagrant_plugin_dir %{_sharedstatedir}/%{name}
 
 %global vagrant_spec_commit c0dafc996165bf1628b672dd533f1858ff66fe4a
 
@@ -25,6 +23,10 @@ Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit
 Source3: patches.rb
 
 Source4: macros.vagrant
+
+# The load directive is supported since RPM 4.12, i.e. F21+. The build process
+# fails on older Fedoras.
+%{?load:%{SOURCE4}}
 
 Patch0: vagrant-1.6.5-fix-dependencies.patch
 
@@ -110,14 +112,14 @@ rm %{buildroot}%{vagrant_dir}/LICENSE
 # https://github.com/mitchellh/vagrant-installers/blob/master/substrate/modules/vagrant_installer/templates/vagrant.erb
 install -D -m 755 %{SOURCE1} %{buildroot}%{_bindir}/vagrant
 sed -i 's|@vagrant_dir@|%{vagrant_dir}|' %{buildroot}%{_bindir}/vagrant
-sed -i 's|@vagrant_plugin_dir@|%{vagrant_plugin_dir}|' %{buildroot}%{_bindir}/vagrant
+sed -i 's|@vagrant_plugin_conf_dir@|%{vagrant_plugin_conf_dir}|' %{buildroot}%{_bindir}/vagrant
 
 # auto-completion
 install -D -m 0644 %{buildroot}%{vagrant_dir}/contrib/bash/completion.sh \
   %{buildroot}%{bashcompletion_dir}/%{name}
 
 # create the global home dir
-install -d -m 755 %{buildroot}%{vagrant_plugin_dir}
+install -d -m 755 %{buildroot}%{vagrant_plugin_conf_dir}
 
 # Install the monkey-patch file and load it from Vagrant after loading RubyGems
 cp %{SOURCE3}  %{buildroot}%{vagrant_dir}/lib/vagrant
@@ -126,6 +128,7 @@ sed -i -e "11irequire 'vagrant/patches'" %{buildroot}%{vagrant_dir}/lib/vagrant.
 # Install Vagrant macros
 mkdir -p %{buildroot}%{_rpmconfigdir}/macros.d/
 cp %{SOURCE4} %{buildroot}%{_rpmconfigdir}/macros.d/
+sed -i "s/%%{name}/%{name}/" %{buildroot}%{_rpmconfigdir}/macros.d/macros.%{name}
 
 
 %check
