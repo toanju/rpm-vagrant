@@ -106,7 +106,7 @@ install -D -m 0644 %{buildroot}%{vagrant_dir}/contrib/bash/completion.sh \
   %{buildroot}%{bashcompletion_dir}/%{name}
 
 # create the global home dir
-install -d -m 755 %{buildroot}%{_sharedstatedir}/%{name}
+install -d -m 755 %{buildroot}%{vagrant_plugin_dir}
 
 %check
 # Unpack the vagran-spec and adjust the directory name.
