@@ -6,7 +6,7 @@
 
 Name: vagrant
 Version: 1.6.5
-Release: 12%{?dist}
+Release: 13%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -23,6 +23,8 @@ Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit
 # Monkey-patching needed for Vagrant to work until the respective patches
 # for RubyGems and Bundler are in place
 Source3: patches.rb
+
+Source4: macros.vagrant
 
 Patch0: vagrant-1.6.5-fix-dependencies.patch
 
@@ -80,6 +82,12 @@ BuildArch: noarch
 %description doc
 Documentation for %{name}.
 
+%package devel
+Summary: Package shipping development files for Vagrant
+
+%description devel
+Package shipping macros for convinient plugin registration and
+unregistration.
 
 %prep
 %setup -q
@@ -92,7 +100,6 @@ Documentation for %{name}.
 mkdir -p %{buildroot}%{vagrant_dir}
 cp -pa ./* \
         %{buildroot}%{vagrant_dir}/
-
 
 find %{buildroot}%{vagrant_dir}/bin -type f | xargs chmod a+x
 
@@ -115,6 +122,10 @@ install -d -m 755 %{buildroot}%{vagrant_plugin_dir}
 # Install the monkey-patch file and load it from Vagrant after loading RubyGems
 cp %{SOURCE3}  %{buildroot}%{vagrant_dir}/lib/vagrant
 sed -i -e "11irequire 'vagrant/patches'" %{buildroot}%{vagrant_dir}/lib/vagrant.rb
+
+# Install Vagrant macros
+mkdir -p %{buildroot}%{_rpmconfigdir}/macros.d/
+cp %{SOURCE4} %{buildroot}%{_rpmconfigdir}/macros.d/
 
 
 %check
@@ -168,8 +179,14 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 %{vagrant_dir}/test
 %{vagrant_dir}/vagrant-spec.config.example.rb
 
+%files devel
+%{_rpmconfigdir}/macros.d/macros.%{name}
+
 
 %changelog
+* Tue Nov 25 2014 Josef Stribny <jstribny@redhat.com> - 1.6.5-13
+- Create -devel sub-package
+
 * Mon Nov 24 2014 Josef Stribny <jstribny@redhat.com> - 1.6.5-12
 - Include monkey-patching for RubyGems and Bundler for now
 

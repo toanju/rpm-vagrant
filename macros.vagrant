@@ -1,0 +1,41 @@
+# Common gem locations and files for Vagrant plugin
+%gem_dir /usr/share/vagrant/gems
+%gem_instdir %{gem_dir}/gems/%{gem_name}-%{version}
+%gem_extdir_mri %{_libdir}/gems/ruby/%{gem_name}-%{version}
+%gem_libdir %{gem_instdir}/lib
+%gem_cache %{gem_dir}/cache/%{gem_name}-%{version}.gem
+%gem_spec %{gem_dir}/specifications/%{gem_name}-%{version}.gemspec
+%gem_docdir %{gem_dir}/doc/%{gem_name}-%{version}
+
+# Install gem into appropriate directory.
+# -n<gem_file>      Overrides gem file name for installation.
+# -d<install_dir>   Set installation directory.
+%gem_install(d:n:) \
+mkdir -p %{-d*}%{!?-d:.%{gem_dir}} \
+\
+CONFIGURE_ARGS="--with-cflags='%{optflags}' $CONFIGURE_ARGS" \\\
+gem install \\\
+        -V \\\
+        --local \\\
+        --install-dir %{-d*}%{!?-d:.%{gem_dir}} \\\
+        --bindir .%{_bindir} \\\
+        --force \\\
+        --document=ri,rdoc \\\
+        --backtrace \\\
+        %{-n*}%{!?-n:%{gem_name}-%{version}.gem} \
+%{nil}
+
+# Macros to (un)register Vagrant gem
+%vagrant_plugin_register() \
+%{_bindir}/ruby -e ' \\\
+$LOAD_PATH.unshift "%{_datadir}/vagrant/lib"; \\\
+require "vagrant/plugin/manager"; \\\
+Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "/var/lib/vagrant/plugins.json")).add_plugin "%1";' \
+%{nil}
+
+%vagrant_plugin_unregister() \
+%{_bindir}/ruby -e ' \\\
+$LOAD_PATH.unshift "%{_datadir}/vagrant/lib"; \\\
+require "vagrant/plugin/manager"; \\\
+Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "/var/lib/vagrant/plugins.json")).remove_plugin "%1";' \
+%{nil}
