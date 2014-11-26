@@ -50,7 +50,6 @@ Requires: rubygem(nokogiri) >= 1.6
 Requires: bsdtar
 Requires: curl
 
-#Requires: polkit-pkla-compat
 Requires(pre): shadow-utils
 
 BuildRequires: bsdtar
