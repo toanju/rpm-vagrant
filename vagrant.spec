@@ -49,8 +49,6 @@ Requires: rubygem(net-scp) >= 1.1.0
 Requires: rubygem(nokogiri) >= 1.6
 Requires: bsdtar
 Requires: curl
-# libvirt as a default provider
-#Requires: rubygem(vagrant-libvirt)
 
 #Requires: polkit-pkla-compat
 Requires(pre): shadow-utils
