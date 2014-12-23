@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.6.5
-Release: 14%{?dist}
+Release: 15%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -125,6 +125,9 @@ mv ../vagrant-spec{-%{vagrant_spec_commit},}
 # Remove the git reference, which is useless in our case.
 sed -i '/git/ s/^/#/' ../vagrant-spec/vagrant-spec.gemspec
 
+# Relax the thor dependency, since Fedora ships with newer version.
+sed -i '/thor/ s/~>/>=/' ../vagrant-spec/vagrant-spec.gemspec
+
 # TODO: winrm is not in Fedora yet.
 rm -rf test/unit/plugins/communicators/winrm
 sed -i '/it "eager loads WinRM" do/,/^      end$/ s/^/#/' test/unit/vagrant/machine_test.rb
@@ -171,6 +174,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Tue Dec 23 2014 Vít Ondruch <vondruch@redhat.com> - 1.6.5-15
+- Relax thor dependency to keep up with Fedora.
+
 * Wed Nov 26 2014 Vít Ondruch <vondruch@redhat.com> - 1.6.5-14
 - Drop -devel sub-package.
 
