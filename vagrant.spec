@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.6.5
-Release: 15%{?dist}
+Release: 16%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -49,6 +49,7 @@ Requires: curl
 Requires(pre): shadow-utils
 
 BuildRequires: bsdtar
+BuildRequires: ruby
 BuildRequires: rubygem(listen)
 BuildRequires: rubygem(childprocess)
 BuildRequires: rubygem(hashicorp-checkpoint)
@@ -103,6 +104,7 @@ sed -i 's|@vagrant_plugin_conf_dir@|%{vagrant_plugin_conf_dir}|' %{buildroot}%{_
 # auto-completion
 install -D -m 0644 %{buildroot}%{vagrant_dir}/contrib/bash/completion.sh \
   %{buildroot}%{bashcompletion_dir}/%{name}
+sed -i '/#!\// d' %{buildroot}%{bashcompletion_dir}/%{name}
 
 # create the global home dir
 install -d -m 755 %{buildroot}%{vagrant_plugin_conf_dir}
@@ -115,6 +117,15 @@ sed -i -e "11irequire 'vagrant/patches'" %{buildroot}%{vagrant_dir}/lib/vagrant.
 mkdir -p %{buildroot}%{_rpmconfigdir}/macros.d/
 cp %{SOURCE4} %{buildroot}%{_rpmconfigdir}/macros.d/
 sed -i "s/%%{name}/%{name}/" %{buildroot}%{_rpmconfigdir}/macros.d/macros.%{name}
+
+# Make sure the plugins.json exists when we define
+# it as a ghost file further down - will not be packaged.
+touch %{buildroot}%{_sharedstatedir}/%{name}/plugins.json
+
+# Adjust permissions.
+# https://github.com/mitchellh/vagrant/pull/5220
+chmod 0644 %{buildroot}%{vagrant_dir}/plugins/communicators/winrm/command_filters/mkdir.rb
+
 
 
 %check
@@ -143,6 +154,7 @@ getent group vagrant >/dev/null || groupadd -r vagrant
  
 %files
 %license LICENSE
+%doc README.md
 %{_bindir}/%{name}
 %dir %{vagrant_dir}
 %exclude %{vagrant_dir}/.*
@@ -159,13 +171,16 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 %{vagrant_dir}/templates
 %{vagrant_dir}/version.txt
 %exclude %{vagrant_dir}/website
+# TODO: This is suboptimal and may break, but can't see much better way ...
+%dir %{dirname:%{bashcompletion_dir}}
+%dir %{bashcompletion_dir}
 %{bashcompletion_dir}/%{name}
 %dir %{_sharedstatedir}/%{name}
 %ghost %{_sharedstatedir}/%{name}/plugins.json
 %{_rpmconfigdir}/macros.d/macros.%{name}
 
 %files doc
-%doc CONTRIBUTING.md CHANGELOG.md README.md
+%doc CONTRIBUTING.md CHANGELOG.md
 %{vagrant_dir}/Gemfile
 %{vagrant_dir}/Rakefile
 %{vagrant_dir}/tasks
@@ -174,6 +189,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Tue Jan 20 2015 Vít Ondruch <vondruch@redhat.com> - 1.6.5-16
+- Minor review fixes.
+
 * Tue Dec 23 2014 Vít Ondruch <vondruch@redhat.com> - 1.6.5-15
 - Relax thor dependency to keep up with Fedora.
 
