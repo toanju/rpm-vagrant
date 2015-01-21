@@ -1,39 +1,5 @@
 # Monkey-patching for RubyGems and Bundler to play nicely with Vagrant
 
-# Don't touch the binary when not needed.
-# https://github.com/rubygems/rubygems/pull/1057
-class Gem::Installer
-  def generate_bin # :nodoc:
-    return if spec.executables.nil? or spec.executables.empty?
-
-    Dir.mkdir @bin_dir unless File.exist? @bin_dir
-    raise Gem::FilePermissionError.new(@bin_dir) unless File.writable? @bin_dir
-
-    spec.executables.each do |filename|
-      filename.untaint
-      bin_path = File.join gem_dir, spec.bindir, filename
-
-      unless File.exist? bin_path then
-        # TODO change this to a more useful warning
-        warn "#{bin_path} maybe `gem pristine #{spec.name}` will fix it?"
-        next
-      end
-
-      mode = File.stat(bin_path).mode
-      FileUtils.chmod mode | 0111, bin_path unless (mode | 0111) == mode
-
-      check_executable_overwrite filename
-
-      if @wrappers then
-        generate_bin_script filename, @bin_dir
-      else
-        generate_bin_symlink filename, @bin_dir
-      end
-
-    end
-  end
-end
-
 # Fix rubygems 2.2 compatibility
 # https://github.com/bundler/bundler/pull/3237
 module Bundler
