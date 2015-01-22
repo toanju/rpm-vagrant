@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.6.5
-Release: 16%{?dist}
+Release: 17%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -130,6 +130,7 @@ chmod 0644 %{buildroot}%{vagrant_dir}/plugins/communicators/winrm/command_filter
 
 %check
 # Unpack the vagran-spec and adjust the directory name.
+rm -rf ../vagrant-spec
 tar xvzf %{S:2} -C ..
 mv ../vagrant-spec{-%{vagrant_spec_commit},}
 
@@ -189,6 +190,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Thu Jan 22 2015 Michael Adam <madam@redhat.com> - 1.6.5-17
+- Fix %check in an unclean build environment.
+
 * Tue Jan 20 2015 Vít Ondruch <vondruch@redhat.com> - 1.6.5-16
 - Minor review fixes.
 
