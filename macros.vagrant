@@ -6,7 +6,7 @@
 # Common locations for Vagrant plugin gems
 %vagrant_plugin_dir %{vagrant_dir}/gems
 %vagrant_plugin_instdir %{vagrant_plugin_dir}/gems/%{vagrant_plugin_name}-%{version}
-# We are not prepared for paltfor dependent vagrant plugins yet.
+# We are not prepared for platform dependent vagrant plugins yet.
 # %%vagrant_plugin_extdir %%{_libdir}/%%{name}/gems/ruby/%%{vagrant_plugin_name}-%%{version}
 %vagrant_plugin_libdir %{vagrant_plugin_instdir}/lib
 %vagrant_plugin_cache %{vagrant_plugin_dir}/cache/%{vagrant_plugin_name}-%{version}.gem

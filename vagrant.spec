@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.6.5
-Release: 17%{?dist}
+Release: 18%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -126,6 +126,16 @@ touch %{buildroot}%{_sharedstatedir}/%{name}/plugins.json
 # https://github.com/mitchellh/vagrant/pull/5220
 chmod 0644 %{buildroot}%{vagrant_dir}/plugins/communicators/winrm/command_filters/mkdir.rb
 
+# Prepare vagrant plugins directory structure.
+for i in \
+  %{vagrant_plugin_instdir} \
+  %{vagrant_plugin_cache} \
+  %{vagrant_plugin_spec} \
+  %{vagrant_plugin_docdir}
+do
+  mkdir -p `dirname %{buildroot}$i`
+done
+
 
 
 %check
@@ -180,6 +190,14 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 %ghost %{_sharedstatedir}/%{name}/plugins.json
 %{_rpmconfigdir}/macros.d/macros.%{name}
 
+# Explicitly include Vagrant plugins directory strucure to avoid accidentally
+# packaged content.
+%dir %{vagrant_plugin_dir}
+%dir %{dirname:%{vagrant_plugin_instdir}}
+%dir %{dirname:%{vagrant_plugin_cache}}
+%dir %{dirname:%{vagrant_plugin_spec}}
+%dir %{dirname:%{vagrant_plugin_docdir}}
+
 %files doc
 %doc CONTRIBUTING.md CHANGELOG.md
 %{vagrant_dir}/Gemfile
@@ -190,6 +208,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Mon Jan 26 2015 Vít Ondruch <vondruch@redhat.com> - 1.6.5-18
+- Prepare and own plugin directory structure.
+
 * Thu Jan 22 2015 Michael Adam <madam@redhat.com> - 1.6.5-17
 - Fix %check in an unclean build environment.
 - Fix typo.
