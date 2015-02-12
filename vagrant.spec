@@ -3,8 +3,8 @@
 %global vagrant_spec_commit c0dafc996165bf1628b672dd533f1858ff66fe4a
 
 Name: vagrant
-Version: 1.6.5
-Release: 18%{?dist}
+Version: 1.7.2
+Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -24,7 +24,7 @@ Source4: macros.vagrant
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
 
-Patch0: vagrant-1.6.5-fix-dependencies.patch
+Patch0: vagrant-1.7.2-fix-dependencies.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -62,6 +62,9 @@ BuildRequires: rubygem(erubis)
 BuildRequires: rubygem(rb-inotify)
 BuildRequires: rubygem(rspec) < 3
 BuildRequires: rubygem(bundler)
+BuildRequires: rubygem(net-sftp)
+BuildRequires: rubygem(rest-client)
+BuildRequires: rubygem(webmock)
 BuildRequires: pkgconfig(bash-completion)
 BuildArch: noarch
 
@@ -122,10 +125,6 @@ sed -i "s/%%{name}/%{name}/" %{buildroot}%{_rpmconfigdir}/macros.d/macros.%{name
 # it as a ghost file further down - will not be packaged.
 touch %{buildroot}%{_sharedstatedir}/%{name}/plugins.json
 
-# Adjust permissions.
-# https://github.com/mitchellh/vagrant/pull/5220
-chmod 0644 %{buildroot}%{vagrant_dir}/plugins/communicators/winrm/command_filters/mkdir.rb
-
 # Prepare vagrant plugins directory structure.
 for i in \
   %{vagrant_plugin_instdir} \
@@ -149,6 +148,10 @@ sed -i '/git/ s/^/#/' ../vagrant-spec/vagrant-spec.gemspec
 
 # Relax the thor dependency, since Fedora ships with newer version.
 sed -i '/thor/ s/~>/>=/' ../vagrant-spec/vagrant-spec.gemspec
+
+#Insert new test dependencies
+sed -i '25 i\  spec.add_dependency "webmock"' ../vagrant-spec/vagrant-spec.gemspec
+sed -i '26 i\  spec.add_dependency "fake_ftp"' ../vagrant-spec/vagrant-spec.gemspec
 
 # TODO: winrm is not in Fedora yet.
 rm -rf test/unit/plugins/communicators/winrm
@@ -208,6 +211,11 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Thu Feb 12 2015 Tomas Hrcka <thrcka@redhat.com> - 1.7.2-1
+- Update to latest upstream version 1.7.2
+- Backport dependencies fix patch
+- Remove permissions fix on mkdir.rb
+
 * Mon Jan 26 2015 Vít Ondruch <vondruch@redhat.com> - 1.6.5-18
 - Prepare and own plugin directory structure.
 
