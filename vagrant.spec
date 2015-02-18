@@ -65,6 +65,7 @@ BuildRequires: rubygem(bundler)
 BuildRequires: rubygem(net-sftp)
 BuildRequires: rubygem(rest-client)
 BuildRequires: rubygem(webmock)
+BuildRequires: rubygem(fake_ftp)
 BuildRequires: pkgconfig(bash-completion)
 BuildArch: noarch
 
