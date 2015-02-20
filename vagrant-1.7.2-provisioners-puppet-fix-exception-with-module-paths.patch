@@ -1,0 +1,23 @@
+From 95e1c19f225ef8fc14c958f7f2bdf6c29691817a Mon Sep 17 00:00:00 2001
+From: Mitchell Hashimoto <mitchell.hashimoto@gmail.com>
+Date: Tue, 6 Jan 2015 22:49:53 -0800
+Subject: [PATCH] provisioners/puppet: fix exception with module paths
+ [GH-5123]
+
+---
+ plugins/provisioners/puppet/provisioner/puppet.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/provisioners/puppet/provisioner/puppet.rb b/plugins/provisioners/puppet/provisioner/puppet.rb
+index 4953404..c1e01c9 100644
+--- a/plugins/provisioners/puppet/provisioner/puppet.rb
++++ b/plugins/provisioners/puppet/provisioner/puppet.rb
+@@ -25,7 +25,7 @@ def configure(root_config)
+           # Setup the module paths
+           @module_paths = []
+           @expanded_module_paths.each_with_index do |path, _|
+-            key = Digest::MD5.hexdigest(path)
++            key = Digest::MD5.hexdigest(path.to_s)
+             @module_paths << [path, File.join(config.temp_dir, "modules-#{key}")]
+           end
+ 

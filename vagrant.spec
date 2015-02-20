@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.7.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -25,6 +25,10 @@ Source4: macros.vagrant
 %{?load:%{SOURCE4}}
 
 Patch0: vagrant-1.7.2-fix-dependencies.patch
+
+# Fix Puppet provisioning error.
+# https://github.com/mitchellh/vagrant/issues/5123
+Patch1: vagrant-1.7.2-provisioners-puppet-fix-exception-with-module-paths.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -88,6 +92,7 @@ Documentation for %{name}.
 %setup -q
 
 %patch0 -p1
+%patch1 -p1
 
 %build
 
@@ -214,6 +219,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Fri Feb 20 2015 Vít Ondruch <vondruch@redhat.com> - 1.7.2-3
+- Fix Puppet provisioning error available in 1.7.2 re-release.
+
 * Fri Feb 20 2015 Michael Adam <madam@redhat.com> - 1.7.2-2
 - Add missing dependencies.
 
