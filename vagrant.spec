@@ -44,6 +44,7 @@ Requires: rubygem(net-ssh) >= 2.6.6
 Requires: rubygem(net-scp) >= 1.1.0
 Requires: rubygem(nokogiri) >= 1.6
 Requires: rubygem(net-sftp)
+Requires: rubygem(rest-client)
 Requires: bsdtar
 Requires: curl
 
@@ -214,7 +215,7 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 %changelog
 * Fri Feb 20 2015 Michael Adam <madam@redhat.com> - 1.7.2-2
-- Add missing dependency to rubygem net-sftp.
+- Add missing dependencies.
 
 * Thu Feb 12 2015 Tomas Hrcka <thrcka@redhat.com> - 1.7.2-1
 - Update to latest upstream version 1.7.2
