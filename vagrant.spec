@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.7.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -43,6 +43,7 @@ Requires: rubygem(log4r)
 Requires: rubygem(net-ssh) >= 2.6.6
 Requires: rubygem(net-scp) >= 1.1.0
 Requires: rubygem(nokogiri) >= 1.6
+Requires: rubygem(net-sftp)
 Requires: bsdtar
 Requires: curl
 
@@ -212,6 +213,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Fri Feb 20 2015 Michael Adam <madam@redhat.com> - 1.7.2-2
+- Add missing dependency to rubygem net-sftp.
+
 * Thu Feb 12 2015 Tomas Hrcka <thrcka@redhat.com> - 1.7.2-1
 - Update to latest upstream version 1.7.2
 - Backport dependencies fix patch
