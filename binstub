@@ -7,8 +7,12 @@
 VAGRANT_DIR="@vagrant_dir@"
 
 # Export gem paths so that we use the isolated gems.
+#
+# Include $USER path to ensure it does not get lost when we call
+# vagrant from already initialized environment.
+#
 # TODO: Should be repalced from .spec file.
-export GEM_PATH="/usr/share/gems:/usr/share/vagrant/gems"
+export GEM_PATH="/home/$USER/.vagrant.d/gems:/usr/share/gems:/usr/share/vagrant/gems"
 #export GEM_HOME="${GEM_PATH}"
 
 # SSL certs

@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.7.2
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -219,6 +219,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Tue May 05 2015 Josef Stribny <jstribny@redhat.com> - 1.7.2-4
+- Include $USER path in binstub
+
 * Fri Feb 20 2015 Vít Ondruch <vondruch@redhat.com> - 1.7.2-3
 - Fix Puppet provisioning error available in 1.7.2 re-release.
 
