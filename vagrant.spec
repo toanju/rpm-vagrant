@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.7.2
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -219,6 +219,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Wed May 06 2015 Josef Stribny <jstribny@redhat.com> - 1.7.2-5
+- Export GEM_HOME based on VAGRANT_HOME
+
 * Tue May 05 2015 Josef Stribny <jstribny@redhat.com> - 1.7.2-4
 - Include $USER path in binstub
 

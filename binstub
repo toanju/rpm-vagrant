@@ -7,13 +7,18 @@
 VAGRANT_DIR="@vagrant_dir@"
 
 # Export gem paths so that we use the isolated gems.
-#
-# Include $USER path to ensure it does not get lost when we call
-# vagrant from already initialized environment.
-#
 # TODO: Should be repalced from .spec file.
-export GEM_PATH="/home/$USER/.vagrant.d/gems:/usr/share/gems:/usr/share/vagrant/gems"
-#export GEM_HOME="${GEM_PATH}"
+export GEM_PATH="/usr/share/gems:/usr/share/vagrant/gems"
+
+# Export GEM_HOME based on VAGRANT_HOME
+#
+# This needs to be set because Bundler includes gem paths
+# from RubyGems' Gem.paths.
+if [ -z $VAGRANT_HOME ]; then
+  VAGRANT_HOME=$(eval echo "~/.vagrant.d")
+fi
+export GEM_HOME="$VAGRANT_HOME/gems"
+
 
 # SSL certs
 export SSL_CERT_FILE="/etc/pki/tls/cert.pem"
