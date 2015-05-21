@@ -1,0 +1,22 @@
+From b85248cb973fb12caac37ebf1af287c6dfdde6de Mon Sep 17 00:00:00 2001
+From: Josef Stribny <jstribny@redhat.com>
+Date: Tue, 19 May 2015 10:44:25 +0200
+Subject: [PATCH] Recognize new Fedora releases
+
+---
+ plugins/guests/fedora/guest.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/guests/fedora/guest.rb b/plugins/guests/fedora/guest.rb
+index 64a5e3d..c1b48d4 100644
+--- a/plugins/guests/fedora/guest.rb
++++ b/plugins/guests/fedora/guest.rb
+@@ -4,7 +4,7 @@ module VagrantPlugins
+   module GuestFedora
+     class Guest < Vagrant.plugin("2", :guest)
+       def detect?(machine)
+-        machine.communicate.test("grep 'Fedora release [12][67890]' /etc/redhat-release")
++        machine.communicate.test("grep 'Fedora release 1[6789]\\|Fedora release 2[0-9]' /etc/redhat-release")
+       end
+     end
+   end

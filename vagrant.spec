@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.7.2
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -29,6 +29,14 @@ Patch0: vagrant-1.7.2-fix-dependencies.patch
 # Fix Puppet provisioning error.
 # https://github.com/mitchellh/vagrant/issues/5123
 Patch1: vagrant-1.7.2-provisioners-puppet-fix-exception-with-module-paths.patch
+
+# Support new Fedora releases
+# https://github.com/mitchellh/vagrant/pull/5730
+Patch2: vagrant-new-fedora-releases.patch
+
+# Don't try to use biosdevname if it's not installed
+# https://github.com/mitchellh/vagrant/pull/5707
+Patch3: vagrant-biosdevname.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -93,6 +101,8 @@ Documentation for %{name}.
 
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
 
@@ -219,6 +229,10 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Thu May 21 2015 Josef Stribny <jstribny@redhat.com> - 1.7.2-6
+- Fix: Support new Fedora releases
+- Fix: Don't try to use biosdevname if it's not installed
+
 * Wed May 06 2015 Josef Stribny <jstribny@redhat.com> - 1.7.2-5
 - Export GEM_HOME based on VAGRANT_HOME
 
