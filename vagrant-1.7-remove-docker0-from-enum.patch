@@ -1,0 +1,23 @@
+From 8e0746843d4b518e3e6ae90e5f56f4b0a2469120 Mon Sep 17 00:00:00 2001
+From: Jim Minter <jim-minter@users.noreply.github.com>
+Date: Tue, 12 May 2015 21:18:31 +0100
+Subject: [PATCH] Remove docker0 from guest network interface enumeration
+
+---
+ plugins/guests/fedora/cap/configure_networks.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/guests/fedora/cap/configure_networks.rb b/plugins/guests/fedora/cap/configure_networks.rb
+index 2f67099..fa83086 100644
+--- a/plugins/guests/fedora/cap/configure_networks.rb
++++ b/plugins/guests/fedora/cap/configure_networks.rb
+@@ -21,7 +21,7 @@ def self.configure_networks(machine, networks)
+           end
+ 
+           if virtual
+-            machine.communicate.sudo("ls /sys/class/net | grep -v lo") do |_, result|
++            machine.communicate.sudo("ls /sys/class/net | egrep -v lo\\|docker") do |_, result|
+               interface_names = result.split("\n")
+             end
+ 
+

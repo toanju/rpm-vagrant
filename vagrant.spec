@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.7.2
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -37,6 +37,10 @@ Patch2: vagrant-new-fedora-releases.patch
 # Don't try to use biosdevname if it's not installed
 # https://github.com/mitchellh/vagrant/pull/5707
 Patch3: vagrant-biosdevname.patch
+
+# Remove docker0 from guest network interface enumeration
+# https://github.com/mitchellh/vagrant/pull/5706
+Patch4: vagrant-1.7-remove-docker0-from-enum.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -103,6 +107,7 @@ Documentation for %{name}.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 
@@ -229,6 +234,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Tue Jun 16 2015 Josef Stribny <jstribny@redhat.com> - 1.7.2-7
+- Fix: Remove docker0 from guest network interface enumeration
+
 * Thu May 21 2015 Josef Stribny <jstribny@redhat.com> - 1.7.2-6
 - Fix: Support new Fedora releases
 - Fix: Don't try to use biosdevname if it's not installed
