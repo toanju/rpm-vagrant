@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.7.2
-Release: 7%{?dist}
+Release: 8%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -41,6 +41,10 @@ Patch3: vagrant-biosdevname.patch
 # Remove docker0 from guest network interface enumeration
 # https://github.com/mitchellh/vagrant/pull/5706
 Patch4: vagrant-1.7-remove-docker0-from-enum.patch
+
+# Fix NFS on Fedora guests
+# https://github.com/mitchellh/vagrant/pull/5880/commits
+Patch5: vagrant-nfs-fix.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -108,6 +112,7 @@ Documentation for %{name}.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 
@@ -234,6 +239,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Tue Jun 30 2015 Josef Stribny <jstribny@redhat.com> - 1.7.2-8
+- Fix NFS on Fedora
+
 * Tue Jun 16 2015 Josef Stribny <jstribny@redhat.com> - 1.7.2-7
 - Fix: Remove docker0 from guest network interface enumeration
 
