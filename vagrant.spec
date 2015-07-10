@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.7.2
-Release: 8%{?dist}
+Release: 9%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -45,6 +45,10 @@ Patch4: vagrant-1.7-remove-docker0-from-enum.patch
 # Fix NFS on Fedora guests
 # https://github.com/mitchellh/vagrant/pull/5880/commits
 Patch5: vagrant-nfs-fix.patch
+
+# Match network interfaces based on MAC address if available
+# https://github.com/mitchellh/vagrant/pull/5884
+Patch6: vagrant-match-interface-on-mac.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -113,6 +117,7 @@ Documentation for %{name}.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %build
 
@@ -239,6 +244,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Fri Jul 10 2015 Dan Williams <dcbw@redhat.com> - 1.7.2-9
+- Allow matching interfaces on MAC address
+
 * Tue Jun 30 2015 Josef Stribny <jstribny@redhat.com> - 1.7.2-8
 - Fix NFS on Fedora
 
