@@ -1,19 +1,21 @@
 %global bashcompletion_dir %(pkg-config --variable=completionsdir bash-completion 2> /dev/null || :)
 
-%global vagrant_spec_commit c0dafc996165bf1628b672dd533f1858ff66fe4a
+%global vagrant_spec_commit f1a18fd3e5387328ca83e016e48373aadb67112a
 
 Name: vagrant
-Version: 1.7.2
-Release: 9%{?dist}
+Version: 1.7.4
+Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
 URL: http://vagrantup.com
+# wget https://github.com/mitchellh/vagrant/archive/v1.7.4/vagrant-1.7.4.tar.gz
 Source0: https://github.com/mitchellh/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
 # Upstream binstub with adjusted paths, the offical way how to run vagrant
 Source1: binstub
 # The library has no official release yet. But since it is just test
 # dependency, it should be fine to include the source right here.
+# wget https://github.com/mitchellh/vagrant-spec/archive/f1a18fd3e5387328ca83e016e48373aadb67112a/vagrant-spec-f1a18fd3e5387328ca83e016e48373aadb67112a.tar.gz
 Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit}/%{name}-spec-%{vagrant_spec_commit}.tar.gz
 # Monkey-patching needed for Vagrant to work until the respective patches
 # for RubyGems and Bundler are in place
@@ -24,31 +26,11 @@ Source4: macros.vagrant
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
 
-Patch0: vagrant-1.7.2-fix-dependencies.patch
+Patch0: vagrant-1.7.4-fix-dependencies.patch
 
-# Fix Puppet provisioning error.
-# https://github.com/mitchellh/vagrant/issues/5123
-Patch1: vagrant-1.7.2-provisioners-puppet-fix-exception-with-module-paths.patch
-
-# Support new Fedora releases
-# https://github.com/mitchellh/vagrant/pull/5730
-Patch2: vagrant-new-fedora-releases.patch
-
-# Don't try to use biosdevname if it's not installed
-# https://github.com/mitchellh/vagrant/pull/5707
-Patch3: vagrant-biosdevname.patch
-
-# Remove docker0 from guest network interface enumeration
-# https://github.com/mitchellh/vagrant/pull/5706
-Patch4: vagrant-1.7-remove-docker0-from-enum.patch
-
-# Fix NFS on Fedora guests
-# https://github.com/mitchellh/vagrant/pull/5880/commits
-Patch5: vagrant-nfs-fix.patch
-
-# Match network interfaces based on MAC address if available
-# https://github.com/mitchellh/vagrant/pull/5884
-Patch6: vagrant-match-interface-on-mac.patch
+# Install plugins in isolation
+# https://github.com/mitchellh/vagrant/pull/5877
+Patch1: vagrant-1.7.4-install-plugins-in-isolation.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -58,17 +40,25 @@ Requires: ruby
 # in Fedora's package.
 Requires: rubygem(rb-inotify)
 Requires: rubygem(bundler) >= 1.5.2
+Requires: rubygem(bundler) < 1.10.5
 Requires: rubygem(hashicorp-checkpoint) >= 0.1.1
+Requires: rubygem(hashicorp-checkpoint) < 0.2
 Requires: rubygem(childprocess) >= 0.5.0
+Requires: rubygem(childprocess) < 0.6
 Requires: rubygem(erubis) >= 2.7.0
+Requires: rubygem(erubis) < 2.8
 Requires: rubygem(i18n) >= 0.6.0
-Requires: rubygem(listen) >= 2.7.1
-Requires: rubygem(log4r)
+Requires: rubygem(listen) >= 3.0.2
+Requires: rubygem(listen) < 3.1
+Requires: rubygem(log4r) >= 1.1.9
+Requires: rubygem(log4r) < 1.1.11
 Requires: rubygem(net-ssh) >= 2.6.6
+Requires: rubygem(net-ssh) < 2.10
 Requires: rubygem(net-scp) >= 1.1.0
 Requires: rubygem(nokogiri) >= 1.6
-Requires: rubygem(net-sftp)
-Requires: rubygem(rest-client)
+Requires: rubygem(net-sftp) >= 2.1
+Requires: rubygem(net-sftp) < 2.2
+Requires: rubygem(rest-client) < 2.0
 Requires: bsdtar
 Requires: curl
 
@@ -113,11 +103,6 @@ Documentation for %{name}.
 
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch6 -p1
 
 %build
 
@@ -244,6 +229,10 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Thu Aug 20 2015 Josef Stribny <jstribny@redhat.com> - 1.7.4-1
+- Update to 1.7.4
+- Patch: install plugins in isolation
+
 * Fri Jul 10 2015 Dan Williams <dcbw@redhat.com> - 1.7.2-9
 - Allow matching interfaces on MAC address
 
