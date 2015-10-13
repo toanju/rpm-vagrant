@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.7.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -32,6 +32,10 @@ Patch0: vagrant-1.7.4-fix-dependencies.patch
 # https://github.com/mitchellh/vagrant/pull/5877
 Patch1: vagrant-1.7.4-install-plugins-in-isolation.patch
 
+# Fix Bundler 1.10.6 compatibility.
+# https://github.com/mitchellh/vagrant/commit/3b3de6e2e510227e47a0b1bf46cba10c553a2152
+Patch2: vagrant-1.7.4-Support-Bundler-1.10.6.patch
+
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
 # Explicitly specify MRI, since Vagrant does not work with JRuby ATM.
@@ -40,7 +44,7 @@ Requires: ruby
 # in Fedora's package.
 Requires: rubygem(rb-inotify)
 Requires: rubygem(bundler) >= 1.5.2
-Requires: rubygem(bundler) < 1.10.5
+Requires: rubygem(bundler) <= 1.10.6
 Requires: rubygem(hashicorp-checkpoint) >= 0.1.1
 Requires: rubygem(hashicorp-checkpoint) < 0.2
 Requires: rubygem(childprocess) >= 0.5.0
@@ -80,6 +84,7 @@ BuildRequires: rubygem(rspec) < 3
 BuildRequires: rubygem(bundler)
 BuildRequires: rubygem(net-sftp)
 BuildRequires: rubygem(rest-client)
+BuildRequires: rubygem(thor)
 BuildRequires: rubygem(webmock)
 BuildRequires: rubygem(fake_ftp)
 BuildRequires: pkgconfig(bash-completion)
@@ -103,6 +108,7 @@ Documentation for %{name}.
 
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 
@@ -229,6 +235,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Tue Oct 13 2015 Vít Ondruch <vondruch@redhat.com> - 1.7.4-2
+- Fix Bundler 1.10.6 compatibility.
+
 * Thu Aug 20 2015 Josef Stribny <jstribny@redhat.com> - 1.7.4-1
 - Update to 1.7.4
 - Patch: install plugins in isolation
