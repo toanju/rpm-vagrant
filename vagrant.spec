@@ -66,6 +66,8 @@ Requires: rubygem(rest-client) < 2.0
 Requires: bsdtar
 Requires: curl
 
+Recommends: vagrant(vagrant-libvirt)
+
 Requires(pre): shadow-utils
 
 BuildRequires: bsdtar
@@ -237,6 +239,7 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 %changelog
 * Tue Oct 13 2015 Vít Ondruch <vondruch@redhat.com> - 1.7.4-2
 - Fix Bundler 1.10.6 compatibility.
+- Recommends vagrant-libvirt installation by default.
 
 * Thu Aug 20 2015 Josef Stribny <jstribny@redhat.com> - 1.7.4-1
 - Update to 1.7.4
