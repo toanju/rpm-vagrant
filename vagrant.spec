@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.7.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -35,6 +35,9 @@ Patch1: vagrant-1.7.4-install-plugins-in-isolation.patch
 # Fix Bundler 1.10.6 compatibility.
 # https://github.com/mitchellh/vagrant/commit/3b3de6e2e510227e47a0b1bf46cba10c553a2152
 Patch2: vagrant-1.7.4-Support-Bundler-1.10.6.patch
+
+# Don't use biosdevname if missing in Fedora guest
+Patch3: vagrant-1.7.4-dont-require-biosdevname-fedora.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -111,6 +114,7 @@ Documentation for %{name}.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 
@@ -237,6 +241,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Wed Oct 14 2015 Josef Stribny <jstribny@redhat.com> - 1.7.4-3
+- Fix: Don't use biosdevname if missing in Fedora guest
+
 * Tue Oct 13 2015 Vít Ondruch <vondruch@redhat.com> - 1.7.4-2
 - Fix Bundler 1.10.6 compatibility.
 - Recommends vagrant-libvirt installation by default.

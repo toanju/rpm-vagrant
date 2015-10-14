@@ -1,0 +1,45 @@
+From 29e60882ca87a006c29d0e3bb4f37746f75f8477 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tadej=20Jane=C5=BE?= <tadej.j@nez.si>
+Date: Sun, 11 Oct 2015 23:09:10 +0200
+Subject: [PATCH] Fixes Fedora network issues when biosdevname command is not
+ present.
+
+Previously, configuring and enabling network interfaces failed with:
+
+"The following SSH command responded with a non-zero exit status.
+Vagrant assumes that this means the command failed!
+
+/usr/sbin/biosdevname --policy=all_ethN -i bash: /usr/sbin/biosdevname:
+No such file or directory
+
+Stdout from the command:
+
+bash: /usr/sbin/biosdevname: No such file or directory"
+
+The previous attempt to fix this (ccc4162) doesn't work since it doesn't
+properly parse the 'bash: /usr/sbin/biosdevname: No such file or
+directory' error message.
+
+This patch works around that problem and adds a comment explaining the
+meaning of the return codes.
+---
+ plugins/guests/fedora/cap/configure_networks.rb | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/plugins/guests/fedora/cap/configure_networks.rb b/plugins/guests/fedora/cap/configure_networks.rb
+index 963996e..364b744 100644
+--- a/plugins/guests/fedora/cap/configure_networks.rb
++++ b/plugins/guests/fedora/cap/configure_networks.rb
+@@ -17,7 +17,10 @@ def self.configure_networks(machine, networks)
+           virtual = false
+           interface_names = Array.new
+           interface_names_by_slot = Array.new
+-          machine.communicate.sudo("/usr/sbin/biosdevname; echo $?") do |_, result|
++          machine.communicate.sudo("/usr/sbin/biosdevname &>/dev/null; echo $?") do |_, result|
++            # The above command returns:
++            #   - '4' if /usr/sbin/biosdevname detects it is running in a virtual machine
++            #   - '127' if /usr/sbin/biosdevname doesn't exist
+             virtual = true if ['4', '127'].include? result.chomp
+           end
+ 
+
