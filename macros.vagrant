@@ -23,8 +23,7 @@ CONFIGURE_ARGS="--with-cflags='%{optflags}' $CONFIGURE_ARGS" \\\
 gem install \\\
         -V \\\
         --local \\\
-        --install-dir %{-d*}%{!?-d:.%{vagrant_plugin_dir}} \\\
-        --bindir .%{_bindir} \\\
+        --build-root %{-d*}%{!?-d:.} \\\
         --force \\\
         --document=ri,rdoc \\\
         --backtrace \\\

@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.7.4
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -241,6 +241,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Mon Feb 01 2016 Vít Ondruch <vondruch@redhat.com> - 1.7.4-4
+- Update the macros to keep them in sync with rubygems package.
+
 * Wed Oct 14 2015 Josef Stribny <jstribny@redhat.com> - 1.7.4-3
 - Fix: Don't use biosdevname if missing in Fedora guest
 
