@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.7.4
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -241,6 +241,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Fri Feb 05 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.7.4-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Mon Feb 01 2016 Vít Ondruch <vondruch@redhat.com> - 1.7.4-5
 - Use another way how to make the documentation to generate.
 
