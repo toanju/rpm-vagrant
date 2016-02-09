@@ -236,9 +236,18 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
-* Tue Jan 05 2016 Tomas Hrcka <thrcka@redhat.com> - 1.8.1-1
+* Tue Feb 09 2016 Tomas Hrcka <thrcka@redhat.com> - 1.8.1-1
 - New upstream release
 - Disable tests using winrm
+
+* Fri Feb 05 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.7.4-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Mon Feb 01 2016 Vít Ondruch <vondruch@redhat.com> - 1.7.4-5
+- Use another way how to make the documentation to generate.
+
+* Mon Feb 01 2016 Vít Ondruch <vondruch@redhat.com> - 1.7.4-4
+- Update the macros to keep them in sync with rubygems package.
 
 * Wed Oct 14 2015 Josef Stribny <jstribny@redhat.com> - 1.7.4-3
 - Fix: Don't use biosdevname if missing in Fedora guest

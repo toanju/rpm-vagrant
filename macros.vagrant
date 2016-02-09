@@ -25,6 +25,7 @@ gem install \\\
         --local \\\
         --install-dir %{-d*}%{!?-d:.%{vagrant_plugin_dir}} \\\
         --bindir .%{_bindir} \\\
+        --ignore-dependencies \\\
         --force \\\
         --document=ri,rdoc \\\
         --backtrace \\\
