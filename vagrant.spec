@@ -1,10 +1,10 @@
 %global bashcompletion_dir %(pkg-config --variable=completionsdir bash-completion 2> /dev/null || :)
 
-%global vagrant_spec_commit f1a18fd3e5387328ca83e016e48373aadb67112a
+%global vagrant_spec_commit 9bba7e1228379c0a249a06ce76ba8ea7d276afbe
 
 Name: vagrant
-Version: 1.7.4
-Release: 3%{?dist}
+Version: 1.8.1
+Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -26,15 +26,10 @@ Source4: macros.vagrant
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
 
-Patch0: vagrant-1.7.4-fix-dependencies.patch
+Patch0: vagrant-1.8.1-fix-dependencies.patch
 
-# Install plugins in isolation
-# https://github.com/mitchellh/vagrant/pull/5877
-Patch1: vagrant-1.7.4-install-plugins-in-isolation.patch
-
-# Fix Bundler 1.10.6 compatibility.
-# https://github.com/mitchellh/vagrant/commit/3b3de6e2e510227e47a0b1bf46cba10c553a2152
-Patch2: vagrant-1.7.4-Support-Bundler-1.10.6.patch
+# Disable ansible winrm tests 
+Patch1: vagrant-1.8.1-disable-winrm-tests.patch
 
 # Don't use biosdevname if missing in Fedora guest
 Patch3: vagrant-1.7.4-dont-require-biosdevname-fedora.patch
@@ -69,7 +64,7 @@ Requires: rubygem(rest-client) < 2.0
 Requires: bsdtar
 Requires: curl
 
-Recommends: vagrant(vagrant-libvirt)
+#Recommends: vagrant(vagrant-libvirt)
 
 Requires(pre): shadow-utils
 
@@ -113,8 +108,8 @@ Documentation for %{name}.
 
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
+#%patch2 -p1
+#%patch3 -p1
 
 %build
 
@@ -241,6 +236,10 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Tue Jan 05 2016 Tomas Hrcka <thrcka@redhat.com> - 1.8.1-1
+- New upstream release
+- Disable tests using winrm
+
 * Wed Oct 14 2015 Josef Stribny <jstribny@redhat.com> - 1.7.4-3
 - Fix: Don't use biosdevname if missing in Fedora guest
 
