@@ -1,0 +1,114 @@
+From 8d5d208fbc4a9b87c6f1f9991dbbf65d5cb5bfbb Mon Sep 17 00:00:00 2001
+From: Tomas Hrcka <thrcka@redhat.com>
+Date: Wed, 27 Jan 2016 10:20:34 +0100
+Subject: [PATCH] fix dependencies
+
+---
+ lib/vagrant/bundler.rb         |  2 +-
+ lib/vagrant/util/downloader.rb |  5 +++--
+ vagrant.gemspec                | 41 ++++++++++++++++++++---------------------
+ 3 files changed, 24 insertions(+), 24 deletions(-)
+
+diff --git a/lib/vagrant/bundler.rb b/lib/vagrant/bundler.rb
+index ff60b32..7e02ae9 100644
+--- a/lib/vagrant/bundler.rb
++++ b/lib/vagrant/bundler.rb
+@@ -188,7 +188,7 @@ module Vagrant
+           gemfile.puts(%Q[source "#{source}"])
+         end
+ 
+-        gemfile.puts(%Q[gem "vagrant", "= #{VERSION}"])
++	gemfile.puts(%Q[gemspec :path => "#{File.expand_path '../../..', __FILE__}"])
+ 
+         gemfile.puts("group :plugins do")
+         plugins.each do |name, plugin|
+diff --git a/lib/vagrant/util/downloader.rb b/lib/vagrant/util/downloader.rb
+index 03e6238..9a02a85 100644
+--- a/lib/vagrant/util/downloader.rb
++++ b/lib/vagrant/util/downloader.rb
+@@ -244,8 +244,9 @@ module Vagrant
+         # If we're in Vagrant, then we use the packaged CA bundle
+         if Vagrant.in_installer?
+           subprocess_options[:env] ||= {}
+-          subprocess_options[:env]["CURL_CA_BUNDLE"] =
+-            File.expand_path("cacert.pem", ENV["VAGRANT_INSTALLER_EMBEDDED_DIR"])
++	  #Use system certificates.
++          #subprocess_options[:env]["CURL_CA_BUNDLE"] =
++          #  File.expand_path("cacert.pem", ENV["VAGRANT_INSTALLER_EMBEDDED_DIR"])
+         end
+ 
+         return [options, subprocess_options]
+diff --git a/vagrant.gemspec b/vagrant.gemspec
+index 078add3..d1dd7bd 100644
+--- a/vagrant.gemspec
++++ b/vagrant.gemspec
+@@ -20,24 +20,23 @@ Gem::Specification.new do |s|
+   s.add_dependency "erubis", "~> 2.7.0"
+   s.add_dependency "i18n", ">= 0.6.0", "<= 0.8.0"
+   s.add_dependency "listen", "~> 3.0.2"
++  s.add_dependency "json"
+   s.add_dependency "hashicorp-checkpoint", "~> 0.1.1"
+   s.add_dependency "log4r", "~> 1.1.9", "< 1.1.11"
+-  s.add_dependency "net-ssh", "~> 3.0.1"
+-  s.add_dependency "net-sftp", "~> 2.1"
+-  s.add_dependency "net-scp", "~> 1.1.0"
+-  s.add_dependency "rb-kqueue", "~> 0.2.0"
++  s.add_dependency "net-ssh" 
++  s.add_dependency "net-sftp", ">= 2.1"
++  s.add_dependency "net-scp", ">= 1.1.0"
+   s.add_dependency "rest-client", ">= 1.6.0", "< 2.0"
+-  s.add_dependency "wdm", "~> 0.1.0"
+-  s.add_dependency "winrm", "~> 1.3"
+-  s.add_dependency "winrm-fs", "~> 0.2.2"
+ 
+   # We lock this down to avoid compilation issues.
+-  s.add_dependency "nokogiri", "= 1.6.3.1"
+-
+-  s.add_development_dependency "rake"
+-  s.add_development_dependency "rspec", "~> 2.14.0"
+-  s.add_development_dependency "webmock", "~> 1.20"
+-  s.add_development_dependency "fake_ftp", "~> 0.1"
++  s.add_dependency "nokogiri"
++  
++  # This dependency is typically provided by listen, but was removed in Fedora.
++  s.add_dependency "rb-inotify"
++  #s.add_development_dependency "rake"
++  #s.add_development_dependency "rspec", "~> 2.14.0"
++  #s.add_development_dependency "webmock", "~> 1.20"
++  #s.add_development_dependency "fake_ftp", "~> 0.1"
+ 
+   # The following block of code determines the files that should be included
+   # in the gem. It does this by reading all the files in the directory where
+@@ -48,10 +47,10 @@ Gem::Specification.new do |s|
+   all_files      = Dir.chdir(root_path) { Dir.glob("**/{*,.*}") }
+   all_files.reject! { |file| [".", ".."].include?(File.basename(file)) }
+   all_files.reject! { |file| file.start_with?("website/") }
+-  gitignore_path = File.join(root_path, ".gitignore")
+-  gitignore      = File.readlines(gitignore_path)
+-  gitignore.map!    { |line| line.chomp.strip }
+-  gitignore.reject! { |line| line.empty? || line =~ /^(#|!)/ }
++  #gitignore_path = File.join(root_path, ".gitignore")
++  #gitignore      = File.readlines(gitignore_path)
++  #gitignore.map!    { |line| line.chomp.strip }
++  #gitignore.reject! { |line| line.empty? || line =~ /^(#|!)/ }
+ 
+   unignored_files = all_files.reject do |file|
+     # Ignore any directories, the gemspec only cares about files
+@@ -65,10 +64,10 @@ Gem::Specification.new do |s|
+     #     like '.DS_Store' will match sub-directories too (same behavior
+     #     as git).
+     #
+-    gitignore.any? do |ignore|
+-      File.fnmatch(ignore, file, File::FNM_PATHNAME) ||
+-        File.fnmatch(ignore, File.basename(file), File::FNM_PATHNAME)
+-    end
++    #gitignore.any? do |ignore|
++    #  File.fnmatch(ignore, file, File::FNM_PATHNAME) ||
++    #    File.fnmatch(ignore, File.basename(file), File::FNM_PATHNAME)
++    #end
+   end
+ 
+   s.files         = unignored_files
+-- 
+2.5.0
+
