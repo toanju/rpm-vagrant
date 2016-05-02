@@ -1,0 +1,25 @@
+From fb5f295b4be70f9aedd60717e683f01ea0d00317 Mon Sep 17 00:00:00 2001
+From: Christian Hofstaedtler <zeha@debian.org>
+Date: Thu, 21 Apr 2016 22:59:59 +0200
+Subject: [PATCH] 
+ fixes-#7073-specification.rb-undefined-method-group_by-for-nilclass: PR #7198
+ allows vagrant to work with newer versions of various ruby libs by explicitly
+ calling reset
+
+---
+ lib/vagrant/bundler.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/vagrant/bundler.rb b/lib/vagrant/bundler.rb
+index ff60b32..f6414ea 100644
+--- a/lib/vagrant/bundler.rb
++++ b/lib/vagrant/bundler.rb
+@@ -265,7 +265,7 @@ def with_isolated_gem
+ 
+       # Reset the all specs override that Bundler does
+       old_all = Gem::Specification._all
+-      Gem::Specification.all = nil
++      Gem::Specification.reset
+ 
+       # /etc/gemrc and so on.
+       old_config = nil

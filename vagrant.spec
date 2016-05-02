@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.8.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -33,6 +33,11 @@ Patch1: vagrant-1.8.1-disable-winrm-tests.patch
 
 # Don't use biosdevname if missing in Fedora guest
 Patch3: vagrant-1.7.4-dont-require-biosdevname-fedora.patch
+
+# Fixes vagrant plugin install error with recent RubyGems.
+# https://bugzilla.redhat.com/show_bug.cgi?id=1330208
+# https://github.com/mitchellh/vagrant/pull/7198
+Patch4: vagrant-1.8.1-Fixes-specification-rb-undefined-method-group-by-for-nilclass.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -78,6 +83,7 @@ BuildRequires: rubygem(net-ssh)
 BuildRequires: rubygem(net-scp)
 BuildRequires: rubygem(nokogiri)
 BuildRequires: rubygem(i18n)
+BuildRequires: rubygem(json)
 BuildRequires: rubygem(erubis)
 BuildRequires: rubygem(rb-inotify)
 BuildRequires: rubygem(rspec) < 3
@@ -108,8 +114,8 @@ Documentation for %{name}.
 
 %patch0 -p1
 %patch1 -p1
-#%patch2 -p1
 #%patch3 -p1
+%patch4 -p1
 
 %build
 
@@ -236,6 +242,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Mon May 02 2016 Vít Ondruch <vondruch@redhat.com> - 1.8.1-2
+- Fix plugin installation error (rhbz#1330208).
+
 * Tue Feb 09 2016 Tomas Hrcka <thrcka@redhat.com> - 1.8.1-1
 - New upstream release
 - Disable tests using winrm
