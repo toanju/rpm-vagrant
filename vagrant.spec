@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.8.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -65,7 +65,7 @@ Requires: rubygem(net-scp) >= 1.1.0
 Requires: rubygem(nokogiri) >= 1.6
 Requires: rubygem(net-sftp) >= 2.1
 Requires: rubygem(net-sftp) < 2.2
-Requires: rubygem(rest-client) < 2.0
+Requires: rubygem(rest-client) < 3.0
 Requires: bsdtar
 Requires: curl
 
@@ -116,6 +116,10 @@ Documentation for %{name}.
 %patch1 -p1
 #%patch3 -p1
 %patch4 -p1
+
+# Support rest-client 2.x
+# https://github.com/mitchellh/vagrant/pull/7589
+sed -i -e '/"rest-client"/ s/< 2.0/< 3.0/' vagrant.gemspec
 
 %build
 
@@ -242,6 +246,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Mon Jul 18 2016 Jun Aruga <jaruga@redhat.com> - 1.8.1-3
+- Support rest-client 2.x (rhbz#1356650).
+
 * Mon May 02 2016 Vít Ondruch <vondruch@redhat.com> - 1.8.1-2
 - Fix plugin installation error (rhbz#1330208).
 
