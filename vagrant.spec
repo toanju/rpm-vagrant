@@ -3,13 +3,12 @@
 %global vagrant_spec_commit 9bba7e1228379c0a249a06ce76ba8ea7d276afbe
 
 Name: vagrant
-Version: 1.8.1
-Release: 3%{?dist}
+Version: 1.8.5
+Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
 URL: http://vagrantup.com
-# wget https://github.com/mitchellh/vagrant/archive/v1.7.4/vagrant-1.7.4.tar.gz
 Source0: https://github.com/mitchellh/%{name}/archive/v%{version}/%{name}-%{version}.tar.gz
 # Upstream binstub with adjusted paths, the offical way how to run vagrant
 Source1: binstub
@@ -19,25 +18,21 @@ Source1: binstub
 Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit}/%{name}-spec-%{vagrant_spec_commit}.tar.gz
 # Monkey-patching needed for Vagrant to work until the respective patches
 # for RubyGems and Bundler are in place
-Source3: patches.rb
 Source4: macros.vagrant
 
 # The load directive is supported since RPM 4.12, i.e. F21+. The build process
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
 
-Patch0: vagrant-1.8.1-fix-dependencies.patch
+Patch0: vagrant-1.8.5-fix-dependencies.patch
 
 # Disable ansible winrm tests 
 Patch1: vagrant-1.8.1-disable-winrm-tests.patch
 
-# Don't use biosdevname if missing in Fedora guest
-Patch3: vagrant-1.7.4-dont-require-biosdevname-fedora.patch
-
-# Fixes vagrant plugin install error with recent RubyGems.
-# https://bugzilla.redhat.com/show_bug.cgi?id=1330208
-# https://github.com/mitchellh/vagrant/pull/7198
-Patch4: vagrant-1.8.1-Fixes-specification-rb-undefined-method-group-by-for-nilclass.patch
+# Fix incorrect permissions on ~/.ssh/authorized_keys, which causes
+# authentication failure after insecure keypair replacement.
+# https://github.com/mitchellh/vagrant/issues/7610
+Patch2: vagrant-1.8.5-Fix-incorrect-permissions-on-ssh-authorized_keys.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -46,8 +41,7 @@ Requires: ruby
 # rb-inotify should be installed by listen, but this dependency was removed
 # in Fedora's package.
 Requires: rubygem(rb-inotify)
-Requires: rubygem(bundler) >= 1.5.2
-Requires: rubygem(bundler) <= 1.10.6
+Requires: rubygem(bundler) >= 1.12.5
 Requires: rubygem(hashicorp-checkpoint) >= 0.1.1
 Requires: rubygem(hashicorp-checkpoint) < 0.2
 Requires: rubygem(childprocess) >= 0.5.0
@@ -55,21 +49,22 @@ Requires: rubygem(childprocess) < 0.6
 Requires: rubygem(erubis) >= 2.7.0
 Requires: rubygem(erubis) < 2.8
 Requires: rubygem(i18n) >= 0.6.0
-Requires: rubygem(listen) >= 3.0.2
-Requires: rubygem(listen) < 3.1
+Requires: rubygem(i18n) <= 0.8.0
+Requires: rubygem(listen) >= 3.1.5
+Requires: rubygem(listen) < 3.2
 Requires: rubygem(log4r) >= 1.1.9
 Requires: rubygem(log4r) < 1.1.11
-Requires: rubygem(net-ssh) >= 2.6.6
-Requires: rubygem(net-ssh) < 2.10
+Requires: rubygem(net-ssh) >= 3.0
+Requires: rubygem(net-ssh) < 4
 Requires: rubygem(net-scp) >= 1.1.0
 Requires: rubygem(nokogiri) >= 1.6
 Requires: rubygem(net-sftp) >= 2.1
-Requires: rubygem(net-sftp) < 2.2
+Requires: rubygem(net-sftp) < 3
 Requires: rubygem(rest-client) < 3.0
 Requires: bsdtar
 Requires: curl
 
-#Recommends: vagrant(vagrant-libvirt)
+Recommends: vagrant(vagrant-libvirt)
 
 Requires(pre): shadow-utils
 
@@ -85,7 +80,6 @@ BuildRequires: rubygem(nokogiri)
 BuildRequires: rubygem(i18n)
 BuildRequires: rubygem(json)
 BuildRequires: rubygem(erubis)
-BuildRequires: rubygem(rb-inotify)
 BuildRequires: rubygem(rspec) < 3
 BuildRequires: rubygem(bundler)
 BuildRequires: rubygem(net-sftp)
@@ -114,12 +108,7 @@ Documentation for %{name}.
 
 %patch0 -p1
 %patch1 -p1
-#%patch3 -p1
-%patch4 -p1
-
-# Support rest-client 2.x
-# https://github.com/mitchellh/vagrant/pull/7589
-sed -i -e '/"rest-client"/ s/< 2.0/< 3.0/' vagrant.gemspec
+%patch2 -p1
 
 %build
 
@@ -130,7 +119,11 @@ cp -pa ./* \
 
 find %{buildroot}%{vagrant_dir}/bin -type f | xargs chmod a+x
 
-rm %{buildroot}%{vagrant_dir}/{CHANGELOG,CONTRIBUTING,README}.md
+# Remove unneeded executable permission.
+# https://github.com/mitchellh/vagrant/pull/7674
+chmod a-x %{buildroot}%{vagrant_dir}/templates/locales/en.yml
+
+rm %{buildroot}%{vagrant_dir}/{CHANGELOG,README,RELEASE}.md
 rm %{buildroot}%{vagrant_dir}/LICENSE
 
 # Provide executable similar to upstream:
@@ -146,10 +139,6 @@ sed -i '/#!\// d' %{buildroot}%{bashcompletion_dir}/%{name}
 
 # create the global home dir
 install -d -m 755 %{buildroot}%{vagrant_plugin_conf_dir}
-
-# Install the monkey-patch file and load it from Vagrant after loading RubyGems
-cp %{SOURCE3}  %{buildroot}%{vagrant_dir}/lib/vagrant
-sed -i -e "11irequire 'vagrant/patches'" %{buildroot}%{vagrant_dir}/lib/vagrant.rb
 
 # Install Vagrant macros
 mkdir -p %{buildroot}%{_rpmconfigdir}/macros.d/
@@ -237,7 +226,7 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 %dir %{dirname:%{vagrant_plugin_docdir}}
 
 %files doc
-%doc CONTRIBUTING.md CHANGELOG.md
+%doc RELEASE.md CHANGELOG.md
 %{vagrant_dir}/Gemfile
 %{vagrant_dir}/Rakefile
 %{vagrant_dir}/tasks
@@ -246,6 +235,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Fri Jul 29 2016 Vít Ondruch <vondruch@redhat.com> - 1.8.5-1
+- Update to Vagrant 1.8.5.
+
 * Mon Jul 18 2016 Jun Aruga <jaruga@redhat.com> - 1.8.1-3
 - Support rest-client 2.x (rhbz#1356650).
 
@@ -310,7 +302,7 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 - Prepare and own plugin directory structure.
 
 * Thu Jan 22 2015 Michael Adam <madam@redhat.com> - 1.6.5-17
-- Fix %check in an unclean build environment.
+- Fix %%check in an unclean build environment.
 - Fix typo.
 
 * Tue Jan 20 2015 Vít Ondruch <vondruch@redhat.com> - 1.6.5-16
