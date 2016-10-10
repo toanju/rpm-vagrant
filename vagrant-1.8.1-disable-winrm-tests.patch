@@ -2,7 +2,7 @@ diff --git a/test/unit/plugins/provisioners/ansible/provisioner_test.rb b/test/u
 index 31354a7..f2dfd0f 100644
 --- a/test/unit/plugins/provisioners/ansible/provisioner_test.rb
 +++ b/test/unit/plugins/provisioners/ansible/provisioner_test.rb
-@@ -445,55 +445,6 @@ VF
+@@ -484,55 +484,6 @@ VF
        end
      end
  

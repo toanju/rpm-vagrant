@@ -21,7 +21,7 @@ export GEM_HOME="$VAGRANT_HOME/gems"
 
 
 # SSL certs
-export SSL_CERT_FILE="/etc/pki/tls/cert.pem"
+export SSL_CERT_FILE="${SSL_CERT_FILE:-/etc/pki/tls/cert.pem}"
 
 # Export an enviromental variable to say we're in a Vagrant
 # installer created environment.

@@ -3,7 +3,7 @@
 %global vagrant_spec_commit 9bba7e1228379c0a249a06ce76ba8ea7d276afbe
 
 Name: vagrant
-Version: 1.8.5
+Version: 1.8.6
 Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
@@ -14,7 +14,7 @@ Source0: https://github.com/mitchellh/%{name}/archive/v%{version}/%{name}-%{vers
 Source1: binstub
 # The library has no official release yet. But since it is just test
 # dependency, it should be fine to include the source right here.
-# wget https://github.com/mitchellh/vagrant-spec/archive/f1a18fd3e5387328ca83e016e48373aadb67112a/vagrant-spec-f1a18fd3e5387328ca83e016e48373aadb67112a.tar.gz
+# wget https://github.com/mitchellh/vagrant-spec/archive/9bba7e1228379c0a249a06ce76ba8ea7d276afbe/vagrant-spec-9bba7e1228379c0a249a06ce76ba8ea7d276afbe.tar.gz
 Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit}/%{name}-spec-%{vagrant_spec_commit}.tar.gz
 # Monkey-patching needed for Vagrant to work until the respective patches
 # for RubyGems and Bundler are in place
@@ -24,15 +24,10 @@ Source4: macros.vagrant
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
 
-Patch0: vagrant-1.8.5-fix-dependencies.patch
+Patch0: vagrant-1.8.6-fix-dependencies.patch
 
 # Disable ansible winrm tests 
 Patch1: vagrant-1.8.1-disable-winrm-tests.patch
-
-# Fix incorrect permissions on ~/.ssh/authorized_keys, which causes
-# authentication failure after insecure keypair replacement.
-# https://github.com/mitchellh/vagrant/issues/7610
-Patch2: vagrant-1.8.5-Fix-incorrect-permissions-on-ssh-authorized_keys.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -108,7 +103,6 @@ Documentation for %{name}.
 
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
 
 %build
 
@@ -118,10 +112,6 @@ cp -pa ./* \
         %{buildroot}%{vagrant_dir}/
 
 find %{buildroot}%{vagrant_dir}/bin -type f | xargs chmod a+x
-
-# Remove unneeded executable permission.
-# https://github.com/mitchellh/vagrant/pull/7674
-chmod a-x %{buildroot}%{vagrant_dir}/templates/locales/en.yml
 
 rm %{buildroot}%{vagrant_dir}/{CHANGELOG,README,RELEASE}.md
 rm %{buildroot}%{vagrant_dir}/LICENSE
@@ -235,6 +225,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Mon Oct 10 2016 Vít Ondruch <vondruch@redhat.com> - 1.8.6-1
+- Update to Vagrant 1.8.6.
+
 * Fri Jul 29 2016 Vít Ondruch <vondruch@redhat.com> - 1.8.5-1
 - Update to Vagrant 1.8.5.
 
