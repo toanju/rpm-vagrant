@@ -3,7 +3,7 @@
 %global vagrant_spec_commit 9bba7e1228379c0a249a06ce76ba8ea7d276afbe
 
 Name: vagrant
-Version: 1.8.6
+Version: 1.8.7
 Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
@@ -24,7 +24,7 @@ Source4: macros.vagrant
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
 
-Patch0: vagrant-1.8.6-fix-dependencies.patch
+Patch0: vagrant-1.8.7-fix-dependencies.patch
 
 # Disable ansible winrm tests 
 Patch1: vagrant-1.8.1-disable-winrm-tests.patch
@@ -33,9 +33,6 @@ Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
 # Explicitly specify MRI, since Vagrant does not work with JRuby ATM.
 Requires: ruby
-# rb-inotify should be installed by listen, but this dependency was removed
-# in Fedora's package.
-Requires: rubygem(rb-inotify)
 Requires: rubygem(bundler) >= 1.12.5
 Requires: rubygem(hashicorp-checkpoint) >= 0.1.1
 Requires: rubygem(hashicorp-checkpoint) < 0.2
@@ -225,6 +222,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Tue Nov 15 2016 Vít Ondruch <vondruch@redhat.com> - 1.8.7-1
+- Update to Vagrant 1.8.7.
+
 * Mon Oct 10 2016 Vít Ondruch <vondruch@redhat.com> - 1.8.6-1
 - Update to Vagrant 1.8.6.
 
