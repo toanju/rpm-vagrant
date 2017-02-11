@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.8.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -222,6 +222,9 @@ getent group vagrant >/dev/null || groupadd -r vagrant
 
 
 %changelog
+* Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.8.7-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Tue Nov 15 2016 Vít Ondruch <vondruch@redhat.com> - 1.8.7-1
 - Update to Vagrant 1.8.7.
 
