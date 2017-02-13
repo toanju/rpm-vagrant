@@ -3,13 +3,13 @@
 
 # Common locations for Vagrant plugin gems
 %vagrant_plugin_dir %{vagrant_embedded_dir}/gems
-%vagrant_plugin_instdir %{vagrant_plugin_dir}/gems/%{vagrant_plugin_name}-%{version}
+%vagrant_plugin_instdir %{vagrant_plugin_dir}/gems/%{vagrant_plugin_name}-%{version}%{?prerelease}
 # We are not prepared for platform dependent vagrant plugins yet.
 # %%vagrant_plugin_extdir %%{_libdir}/%%{name}/gems/ruby/%%{vagrant_plugin_name}-%%{version}
 %vagrant_plugin_libdir %{vagrant_plugin_instdir}/lib
-%vagrant_plugin_cache %{vagrant_plugin_dir}/cache/%{vagrant_plugin_name}-%{version}.gem
-%vagrant_plugin_spec %{vagrant_plugin_dir}/specifications/%{vagrant_plugin_name}-%{version}.gemspec
-%vagrant_plugin_docdir %{vagrant_plugin_dir}/doc/%{vagrant_plugin_name}-%{version}
+%vagrant_plugin_cache %{vagrant_plugin_dir}/cache/%{vagrant_plugin_name}-%{version}%{?prerelease}.gem
+%vagrant_plugin_spec %{vagrant_plugin_dir}/specifications/%{vagrant_plugin_name}-%{version}%{?prerelease}.gemspec
+%vagrant_plugin_docdir %{vagrant_plugin_dir}/doc/%{vagrant_plugin_name}-%{version}%{?prerelease}
 
 # Plugin configuration file location.
 %vagrant_plugin_conf_dir %{_sharedstatedir}/%{name}
@@ -31,7 +31,7 @@ gem install \\\
         --force \\\
         --document=ri,rdoc \\\
         --backtrace \\\
-        %{-n*}%{!?-n:%{vagrant_plugin_name}-%{version}.gem} \
+        %{-n*}%{!?-n:%{vagrant_plugin_name}-%{version}%{?prerelease}.gem} \
 %{nil}
 
 # Macros to (un)register Vagrant gem.
