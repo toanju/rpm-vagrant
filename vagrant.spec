@@ -3,8 +3,8 @@
 %global vagrant_spec_commit 9bba7e1228379c0a249a06ce76ba8ea7d276afbe
 
 Name: vagrant
-Version: 1.8.7
-Release: 2%{?dist}
+Version: 1.9.1
+Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -24,7 +24,7 @@ Source4: macros.vagrant
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
 
-Patch0: vagrant-1.8.7-fix-dependencies.patch
+Patch0: vagrant-1.9.1-fix-dependencies.patch
 
 # Disable ansible winrm tests 
 Patch1: vagrant-1.8.1-disable-winrm-tests.patch
@@ -33,7 +33,6 @@ Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
 # Explicitly specify MRI, since Vagrant does not work with JRuby ATM.
 Requires: ruby
-Requires: rubygem(bundler) >= 1.12.5
 Requires: rubygem(hashicorp-checkpoint) >= 0.1.1
 Requires: rubygem(hashicorp-checkpoint) < 0.2
 Requires: rubygem(childprocess) >= 0.5.0
@@ -42,6 +41,7 @@ Requires: rubygem(erubis) >= 2.7.0
 Requires: rubygem(erubis) < 2.8
 Requires: rubygem(i18n) >= 0.6.0
 Requires: rubygem(i18n) <= 0.8.0
+Requires: rubygem(json)
 Requires: rubygem(listen) >= 3.1.5
 Requires: rubygem(listen) < 3.2
 Requires: rubygem(log4r) >= 1.1.9
@@ -73,7 +73,6 @@ BuildRequires: rubygem(i18n)
 BuildRequires: rubygem(json)
 BuildRequires: rubygem(erubis)
 BuildRequires: rubygem(rspec) < 3
-BuildRequires: rubygem(bundler)
 BuildRequires: rubygem(net-sftp)
 BuildRequires: rubygem(rest-client)
 BuildRequires: rubygem(thor)
@@ -81,6 +80,11 @@ BuildRequires: rubygem(webmock)
 BuildRequires: rubygem(fake_ftp)
 BuildRequires: pkgconfig(bash-completion)
 BuildArch: noarch
+
+# Since Vagrant itself is installed on the same place as its plugins
+# the vagrant_plugin macros can be reused in the spec file, but the plugin
+# name must be specified.
+%global vagrant_plugin_name vagrant
 
 %description
 Vagrant is a tool for building and distributing virtualized development
@@ -96,62 +100,70 @@ BuildArch: noarch
 Documentation for %{name}.
 
 %prep
-%setup -q
+%setup -q -b2
 
 %patch0 -p1
 %patch1 -p1
 
 %build
+gem build %{name}.gemspec
+
+gem install -V --local --install-dir .%{vagrant_plugin_dir} \
+  --ignore-dependencies --force --no-document --backtrace \
+  %{name}-%{version}.gem
+
 
 %install
-mkdir -p %{buildroot}%{vagrant_dir}
-cp -pa ./* \
-        %{buildroot}%{vagrant_dir}/
+mkdir -p %{buildroot}%{vagrant_plugin_dir}
+cp -pa .%{vagrant_plugin_dir}/* \
+        %{buildroot}%{vagrant_plugin_dir}/
 
-find %{buildroot}%{vagrant_dir}/bin -type f | xargs chmod a+x
-
-rm %{buildroot}%{vagrant_dir}/{CHANGELOG,README,RELEASE}.md
-rm %{buildroot}%{vagrant_dir}/LICENSE
+find %{buildroot}%{vagrant_plugin_dir}/bin -type f | xargs chmod a+x
 
 # Provide executable similar to upstream:
 # https://github.com/mitchellh/vagrant-installers/blob/master/substrate/modules/vagrant_installer/templates/vagrant.erb
 install -D -m 755 %{SOURCE1} %{buildroot}%{_bindir}/vagrant
-sed -i 's|@vagrant_dir@|%{vagrant_dir}|' %{buildroot}%{_bindir}/vagrant
-sed -i 's|@vagrant_plugin_conf_dir@|%{vagrant_plugin_conf_dir}|' %{buildroot}%{_bindir}/vagrant
+sed -i 's|@vagrant_embedded_dir@|%{vagrant_embedded_dir}|' %{buildroot}%{_bindir}/vagrant
 
 # auto-completion
-install -D -m 0644 %{buildroot}%{vagrant_dir}/contrib/bash/completion.sh \
+install -D -m 0644 %{buildroot}%{vagrant_plugin_instdir}/contrib/bash/completion.sh \
   %{buildroot}%{bashcompletion_dir}/%{name}
 sed -i '/#!\// d' %{buildroot}%{bashcompletion_dir}/%{name}
 
-# create the global home dir
-install -d -m 755 %{buildroot}%{vagrant_plugin_conf_dir}
 
 # Install Vagrant macros
 mkdir -p %{buildroot}%{_rpmconfigdir}/macros.d/
 cp %{SOURCE4} %{buildroot}%{_rpmconfigdir}/macros.d/
-sed -i "s/%%{name}/%{name}/" %{buildroot}%{_rpmconfigdir}/macros.d/macros.%{name}
+# Expand some basic macros.
+sed -i "s/%%{name}/%{name}/" \
+  %{buildroot}%{_rpmconfigdir}/macros.d/macros.%{name}
+sed -i "/vagrant_embedded_dir/ s/%%{name}/%{name}/" \
+  %{buildroot}%{_rpmconfigdir}/macros.d/macros.%{name}
+sed -i "/vagrant_embedded_dir/ s/%%{version}/%{version}/" \
+  %{buildroot}%{_rpmconfigdir}/macros.d/macros.%{name}
 
-# Make sure the plugins.json exists when we define
-# it as a ghost file further down - will not be packaged.
-touch %{buildroot}%{_sharedstatedir}/%{name}/plugins.json
+# Create configuration directory.
+install -d -m 755 %{buildroot}%{vagrant_plugin_conf_dir}
+# Make sure the plugins.json exists and provide the link to
+# VAGRANT_INSTALLER_EMBEDDED_DIR so Vagrant can locate the file.
+touch %{buildroot}%{vagrant_plugin_conf}
+ln -s -t %{buildroot}%{vagrant_embedded_dir}/ %{vagrant_plugin_conf}
 
-# Prepare vagrant plugins directory structure.
-for i in \
-  %{vagrant_plugin_instdir} \
-  %{vagrant_plugin_cache} \
-  %{vagrant_plugin_spec} \
-  %{vagrant_plugin_docdir}
-do
-  mkdir -p `dirname %{buildroot}$i`
-done
-
+# !!! Backward compatibility hack, introduced in F26 timeframe !!!
+# It allows to (un)register old Vagrant plugins via newer Vagrant.
+# This should be possible to remove at F29, when there is chance everybody is
+# using more recent versions of Vagrant.
+install -d -m 755 %{buildroot}%{vagrant_embedded_dir}/lib/vagrant/plugin
+cat > %{buildroot}%{vagrant_embedded_dir}/lib/vagrant/plugin/manager.rb << 'EOF'
+$LOAD_PATH.shift
+$LOAD_PATH.unshift '%{vagrant_dir}/lib'
+require 'vagrant/plugin/manager'
+EOF
 
 
 %check
-# Unpack the vagrant-spec and adjust the directory name.
+# Adjust the vagrant-spec directory name.
 rm -rf ../vagrant-spec
-tar xvzf %{S:2} -C ..
 mv ../vagrant-spec{-%{vagrant_spec_commit},}
 
 # Remove the git reference, which is useless in our case.
@@ -169,59 +181,88 @@ rm -rf test/unit/plugins/communicators/winrm
 sed -i '/it "eager loads WinRM" do/,/^      end$/ s/^/#/' test/unit/vagrant/machine_test.rb
 sed -i '/it "should return the specified communicator if given" do/,/^    end$/ s/^/#/' test/unit/vagrant/machine_test.rb
 
-bundle --local
-
 # Test suite must be executed in order.
-ruby -rbundler/setup -I.:lib -e 'Dir.glob("test/unit/**/*_test.rb").sort.each &method(:require)'
+ruby -I.:lib -e 'Dir.glob("test/unit/**/*_test.rb").sort.each &method(:require)'
 
 %pre
 getent group vagrant >/dev/null || groupadd -r vagrant
+
+%post -p %{_bindir}/ruby
+begin
+  $LOAD_PATH.unshift "%{vagrant_dir}/lib"
+  begin
+    require "vagrant/plugin/manager"
+  rescue LoadError => e
+    raise
+  end;
+
+  unless File.exist?("%{vagrant_plugin_conf}")
+    Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "%{vagrant_plugin_conf}")).save!
+  end
+rescue => e
+  puts "Vagrant plugin.json is not properly initialized: #{e}"
+end
  
 %files
-%license LICENSE
-%doc README.md
+# Explicitly include Vagrant plugins directory strucure to avoid accidentally
+# packaged content.
+%dir %{vagrant_embedded_dir}
+%dir %{vagrant_plugin_dir}
+%dir %{vagrant_plugin_dir}/bin
+%dir %{vagrant_plugin_dir}/build_info
+%dir %{dirname:%{vagrant_plugin_cache}}
+%dir %{dirname:%{vagrant_plugin_docdir}}
+%dir %{vagrant_plugin_dir}/extensions
+%dir %{dirname:%{vagrant_plugin_instdir}}
+%dir %{dirname:%{vagrant_plugin_spec}}
+
+# Kept for backward compatibility.
+%{vagrant_embedded_dir}/lib
+
 %{_bindir}/%{name}
-%dir %{vagrant_dir}
-%exclude %{vagrant_dir}/.*
-%exclude %{vagrant_dir}/Vagrantfile
-%{vagrant_dir}/bin
+%dir %{vagrant_plugin_instdir}
+%license %{vagrant_plugin_instdir}/LICENSE
+%doc %{vagrant_plugin_instdir}/README.md
+%{vagrant_plugin_dir}/bin/vagrant
+%exclude %{vagrant_plugin_instdir}/.*
+%exclude %{vagrant_plugin_instdir}/Vagrantfile
+%{vagrant_plugin_instdir}/bin
 # TODO: Make more use of contribs.
-%{vagrant_dir}/contrib
-%exclude %{vagrant_dir}/contrib/bash
-%{vagrant_dir}/vagrant.gemspec
-%{vagrant_dir}/keys
-%{vagrant_dir}/lib
-%{vagrant_dir}/plugins
-%exclude %{vagrant_dir}/scripts
-%{vagrant_dir}/templates
-%{vagrant_dir}/version.txt
-%exclude %{vagrant_dir}/website
+%{vagrant_plugin_instdir}/contrib
+%exclude %{vagrant_plugin_instdir}/contrib/bash
+# This is not the original .gemspec.
+%exclude %{vagrant_plugin_instdir}/vagrant.gemspec
+%{vagrant_plugin_instdir}/keys
+%{vagrant_plugin_instdir}/lib
+%{vagrant_plugin_instdir}/plugins
+%exclude %{vagrant_plugin_instdir}/scripts
+%{vagrant_plugin_instdir}/templates
+%{vagrant_plugin_instdir}/version.txt
+%exclude %{vagrant_plugin_cache}
+%{vagrant_plugin_spec}
 # TODO: This is suboptimal and may break, but can't see much better way ...
 %dir %{dirname:%{bashcompletion_dir}}
 %dir %{bashcompletion_dir}
 %{bashcompletion_dir}/%{name}
-%dir %{_sharedstatedir}/%{name}
-%ghost %{_sharedstatedir}/%{name}/plugins.json
+%{vagrant_embedded_dir}/plugins.json
+%dir %{vagrant_plugin_conf_dir}
+%ghost %{vagrant_plugin_conf}
 %{_rpmconfigdir}/macros.d/macros.%{name}
 
-# Explicitly include Vagrant plugins directory strucure to avoid accidentally
-# packaged content.
-%dir %{vagrant_plugin_dir}
-%dir %{dirname:%{vagrant_plugin_instdir}}
-%dir %{dirname:%{vagrant_plugin_cache}}
-%dir %{dirname:%{vagrant_plugin_spec}}
-%dir %{dirname:%{vagrant_plugin_docdir}}
-
 %files doc
-%doc RELEASE.md CHANGELOG.md
-%{vagrant_dir}/Gemfile
-%{vagrant_dir}/Rakefile
-%{vagrant_dir}/tasks
-%{vagrant_dir}/test
-%{vagrant_dir}/vagrant-spec.config.example.rb
+%doc %{vagrant_plugin_instdir}/RELEASE.md
+%doc %{vagrant_plugin_instdir}/CHANGELOG.md
+%{vagrant_plugin_instdir}/Gemfile
+%{vagrant_plugin_instdir}/Rakefile
+%{vagrant_plugin_instdir}/tasks
+%{vagrant_plugin_instdir}/test
+%{vagrant_plugin_instdir}/vagrant-spec.config.example.rb
 
 
 %changelog
+* Mon Feb 13 2017 Vít Ondruch <vondruch@redhat.com> - 1.9.1-1
+- Update to Vagrant 1.9.1.
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.8.7-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 

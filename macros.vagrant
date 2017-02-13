@@ -1,10 +1,8 @@
-%vagrant_dir %{_datadir}/%{name}
-
-%vagrant_plugin_conf_dir %{_sharedstatedir}/%{name}
-%vagrant_plugin_conf %{vagrant_plugin_conf_dir}/plugins.json
+%vagrant_embedded_dir %{_datadir}/%{name}
+%vagrant_dir %{vagrant_embedded_dir}/gems/gems/%{name}-%{version}
 
 # Common locations for Vagrant plugin gems
-%vagrant_plugin_dir %{vagrant_dir}/gems
+%vagrant_plugin_dir %{vagrant_embedded_dir}/gems
 %vagrant_plugin_instdir %{vagrant_plugin_dir}/gems/%{vagrant_plugin_name}-%{version}
 # We are not prepared for platform dependent vagrant plugins yet.
 # %%vagrant_plugin_extdir %%{_libdir}/%%{name}/gems/ruby/%%{vagrant_plugin_name}-%%{version}
@@ -12,6 +10,10 @@
 %vagrant_plugin_cache %{vagrant_plugin_dir}/cache/%{vagrant_plugin_name}-%{version}.gem
 %vagrant_plugin_spec %{vagrant_plugin_dir}/specifications/%{vagrant_plugin_name}-%{version}.gemspec
 %vagrant_plugin_docdir %{vagrant_plugin_dir}/doc/%{vagrant_plugin_name}-%{version}
+
+# Plugin configuration file location.
+%vagrant_plugin_conf_dir %{_sharedstatedir}/%{name}
+%vagrant_plugin_conf %{vagrant_plugin_conf_dir}/plugins.json
 
 # Install gem into appropriate directory.
 # -n<vagrant_plugin_file>      Overrides gem file name for installation.
@@ -32,17 +34,25 @@ gem install \\\
         %{-n*}%{!?-n:%{vagrant_plugin_name}-%{version}.gem} \
 %{nil}
 
-# Macros to (un)register Vagrant gem
+# Macros to (un)register Vagrant gem.
 %vagrant_plugin_register() \
 %{_bindir}/ruby -e ' \\\
 $LOAD_PATH.unshift "%{vagrant_dir}/lib"; \\\
-require "vagrant/plugin/manager"; \\\
-Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "%{vagrant_plugin_conf}")).add_plugin "%1";' \
+begin; \\\
+  require "vagrant/plugin/manager"; \\\
+  Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "%{vagrant_plugin_conf}")).add_plugin "%1"; \\\
+rescue LoadError => e; \\\
+  puts "Plugin register error: #{e}"; \\\
+end; '\
 %{nil}
 
 %vagrant_plugin_unregister() \
 %{_bindir}/ruby -e ' \\\
 $LOAD_PATH.unshift "%{vagrant_dir}/lib"; \\\
-require "vagrant/plugin/manager"; \\\
-Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "%{vagrant_plugin_conf}")).remove_plugin "%1";' \
+begin; \\\
+  require "vagrant/plugin/manager"; \\\
+  Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "%{vagrant_plugin_conf}")).remove_plugin "%1"; \\\
+rescue LoadError => e; \\\
+  puts "Plugin unregister error: #{e}"; \\\
+end; '\
 %{nil}

@@ -4,10 +4,9 @@
 # Vagrant installation directory. This sets up proper environmental variables
 # so that everything loads and compiles to proper directories.
 
-VAGRANT_DIR="@vagrant_dir@"
-
 # Export gem paths so that we use the isolated gems.
 # TODO: Should be repalced from .spec file.
+# ruby -e "print Gem.path.join(':')"
 export GEM_PATH="/usr/share/gems:/usr/share/vagrant/gems"
 
 # Export GEM_HOME based on VAGRANT_HOME
@@ -28,7 +27,7 @@ export SSL_CERT_FILE="${SSL_CERT_FILE:-/etc/pki/tls/cert.pem}"
 export VAGRANT_INSTALLER_ENV=1
 # This is currently used only in Vagrant::Plugin::Manager.system_plugins_file
 # to locate plugins configuration file.
-export VAGRANT_INSTALLER_EMBEDDED_DIR="@vagrant_plugin_conf_dir@"
+export VAGRANT_INSTALLER_EMBEDDED_DIR="@vagrant_embedded_dir@"
 export VAGRANT_INSTALLER_VERSION="2"
 
 # Determine the OS that we're on, which is used in some later checks.
@@ -40,11 +39,8 @@ OS=$(uname -s 2>/dev/null)
 # so that it can behave better.
 export VAGRANT_DETECTED_OS="${OS}"
 
-VAGRANT_EXECUTABLE="${VAGRANT_DIR}/bin/vagrant"
-VAGRANT_LAUNCHER="${VAGRANT_DIR}/lib/vagrant/pre-rubygems.rb"
-
 # Export the VAGRANT_EXECUTABLE so that pre-rubygems can optimize a bit
-export VAGRANT_EXECUTABLE
+export VAGRANT_EXECUTABLE="${VAGRANT_INSTALLER_EMBEDDED_DIR}/gems/bin/vagrant"
 
 # libvirt provider as a default
 if [ -z $VAGRANT_DEFAULT_PROVIDER ]; then
@@ -52,5 +48,5 @@ if [ -z $VAGRANT_DEFAULT_PROVIDER ]; then
 fi
 
 # Call the actual Vagrant bin with our arguments
-exec ruby "${VAGRANT_LAUNCHER}" "$@"
+exec ruby "${VAGRANT_EXECUTABLE}" "$@"
 
