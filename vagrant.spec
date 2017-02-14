@@ -29,6 +29,10 @@ Patch0: vagrant-1.9.1-fix-dependencies.patch
 # Disable ansible winrm tests 
 Patch1: vagrant-1.8.1-disable-winrm-tests.patch
 
+# Use Integer instead of Fixnum for Ruby 2.4+ compatibility.
+# https://github.com/mitchellh/vagrant/pull/8284
+Patch2: vagrant-1.9.1-Fix-Ruby-2.4-compatibility.patch
+
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
 # Explicitly specify MRI, since Vagrant does not work with JRuby ATM.
@@ -104,6 +108,7 @@ Documentation for %{name}.
 
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 gem build %{name}.gemspec

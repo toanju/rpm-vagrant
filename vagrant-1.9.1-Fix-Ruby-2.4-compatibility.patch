@@ -1,0 +1,171 @@
+From 3cdd1d09f9617e6005fc643000b5486ffbe22577 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?V=C3=ADt=20Ondruch?= <vondruch@redhat.com>
+Date: Tue, 14 Feb 2017 10:13:29 +0100
+Subject: [PATCH 1/2] Use Integer instead of Fixnum for Ruby 2.4+
+ compatibility.
+
+---
+ lib/vagrant/cli.rb                                  | 2 +-
+ lib/vagrant/plugin/v2/communicator.rb               | 2 +-
+ lib/vagrant/registry.rb                             | 2 +-
+ plugins/provisioners/shell/config.rb                | 4 ++--
+ plugins/pushes/local-exec/config.rb                 | 4 ++--
+ test/unit/plugins/provisioners/shell/config_test.rb | 6 +++---
+ test/unit/plugins/pushes/local-exec/config_test.rb  | 4 ++--
+ 7 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/lib/vagrant/cli.rb b/lib/vagrant/cli.rb
+index a6e9655f0..cca8c0184 100644
+--- a/lib/vagrant/cli.rb
++++ b/lib/vagrant/cli.rb
+@@ -45,7 +45,7 @@ module Vagrant
+         result = 1
+       end
+ 
+-      result = 0 if !result.is_a?(Fixnum)
++      result = 0 if !result.is_a?(Integer)
+       return result
+     end
+ 
+diff --git a/lib/vagrant/plugin/v2/communicator.rb b/lib/vagrant/plugin/v2/communicator.rb
+index 511fb6002..41385f486 100644
+--- a/lib/vagrant/plugin/v2/communicator.rb
++++ b/lib/vagrant/plugin/v2/communicator.rb
+@@ -50,7 +50,7 @@ module Vagrant
+         # until then. It will wait up to the given duration or raise an
+         # exception if something goes wrong.
+         #
+-        # @param [Fixnum] duration Timeout in seconds.
++        # @param [Integer] duration Timeout in seconds.
+         # @return [Boolean] Will return true on successful connection
+         #   or false on timeout.
+         def wait_for_ready(duration)
+diff --git a/lib/vagrant/registry.rb b/lib/vagrant/registry.rb
+index d84a745a5..c0c4e1bad 100644
+--- a/lib/vagrant/registry.rb
++++ b/lib/vagrant/registry.rb
+@@ -52,7 +52,7 @@ module Vagrant
+ 
+     # Return the number of elements in this registry.
+     #
+-    # @return [Fixnum]
++    # @return [Integer]
+     def length
+       @items.keys.length
+     end
+diff --git a/plugins/provisioners/shell/config.rb b/plugins/provisioners/shell/config.rb
+index 049eb15d0..05da320e3 100644
+--- a/plugins/provisioners/shell/config.rb
++++ b/plugins/provisioners/shell/config.rb
+@@ -106,10 +106,10 @@ module VagrantPlugins
+       def args_valid?
+         return true if !args
+         return true if args.is_a?(String)
+-        return true if args.is_a?(Fixnum)
++        return true if args.is_a?(Integer)
+         if args.is_a?(Array)
+           args.each do |a|
+-            return false if !a.kind_of?(String) && !a.kind_of?(Fixnum)
++            return false if !a.kind_of?(String) && !a.kind_of?(Integer)
+           end
+ 
+           return true
+diff --git a/plugins/pushes/local-exec/config.rb b/plugins/pushes/local-exec/config.rb
+index d62dfa8fa..9ed466088 100644
+--- a/plugins/pushes/local-exec/config.rb
++++ b/plugins/pushes/local-exec/config.rb
+@@ -63,10 +63,10 @@ module VagrantPlugins
+       def args_valid?
+         return true if !args
+         return true if args.is_a?(String)
+-        return true if args.is_a?(Fixnum)
++        return true if args.is_a?(Integer)
+         if args.is_a?(Array)
+           args.each do |a|
+-            return false if !a.kind_of?(String) && !a.kind_of?(Fixnum)
++            return false if !a.kind_of?(String) && !a.kind_of?(Integer)
+           end
+ 
+           return true
+diff --git a/test/unit/plugins/provisioners/shell/config_test.rb b/test/unit/plugins/provisioners/shell/config_test.rb
+index c4d260b90..905a28b03 100644
+--- a/test/unit/plugins/provisioners/shell/config_test.rb
++++ b/test/unit/plugins/provisioners/shell/config_test.rb
+@@ -30,7 +30,7 @@ describe "VagrantPlugins::Shell::Config" do
+       expect(result["shell provisioner"]).to eq([])
+     end
+ 
+-    it "passes with fixnum args" do
++    it "passes with integer args" do
+       subject.path = file_that_exists
+       subject.args = 1
+       subject.finalize!
+@@ -112,7 +112,7 @@ describe "VagrantPlugins::Shell::Config" do
+   end
+ 
+   describe 'finalize!' do
+-    it 'changes fixnum args into strings' do
++    it 'changes integer args into strings' do
+       subject.path = file_that_exists
+       subject.args = 1
+       subject.finalize!
+@@ -120,7 +120,7 @@ describe "VagrantPlugins::Shell::Config" do
+       expect(subject.args).to eq '1'
+     end
+ 
+-    it 'changes fixnum args in arrays into strings' do
++    it 'changes integer args in arrays into strings' do
+       subject.path = file_that_exists
+       subject.args = ["string", 1, 2]
+       subject.finalize!
+diff --git a/test/unit/plugins/pushes/local-exec/config_test.rb b/test/unit/plugins/pushes/local-exec/config_test.rb
+index 1bde10d98..9442b6420 100644
+--- a/test/unit/plugins/pushes/local-exec/config_test.rb
++++ b/test/unit/plugins/pushes/local-exec/config_test.rb
+@@ -70,7 +70,7 @@ describe VagrantPlugins::LocalExecPush::Config do
+           expect(errors).to be_empty
+         end
+ 
+-        it "passes with fixnum args" do
++        it "passes with integer args" do
+           subject.args = 1
+           expect(errors).to be_empty
+         end
+@@ -118,7 +118,7 @@ describe VagrantPlugins::LocalExecPush::Config do
+           expect(errors).to be_empty
+         end
+ 
+-        it "passes with fixnum args" do
++        it "passes with integer args" do
+           subject.args = 1
+           expect(errors).to be_empty
+         end
+-- 
+2.11.1
+
+
+From 6d269293e37db86325bec0a17502d68838d28214 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?V=C3=ADt=20Ondruch?= <vondruch@redhat.com>
+Date: Tue, 14 Feb 2017 10:33:58 +0100
+Subject: [PATCH 2/2] Do not use deprecated API.
+
+---
+ lib/vagrant/util/keypair.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/vagrant/util/keypair.rb b/lib/vagrant/util/keypair.rb
+index 342d3264f..5e3d10ea6 100644
+--- a/lib/vagrant/util/keypair.rb
++++ b/lib/vagrant/util/keypair.rb
+@@ -26,7 +26,7 @@ module Vagrant
+         private_key = rsa_key.to_pem
+ 
+         if password
+-          cipher      = OpenSSL::Cipher::Cipher.new('des3')
++          cipher      = OpenSSL::Cipher.new('des3')
+           private_key = rsa_key.to_pem(cipher, password)
+         end
+ 
+-- 
+2.11.1
+
