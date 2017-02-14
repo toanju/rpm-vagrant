@@ -207,6 +207,44 @@ begin
 rescue => e
   puts "Vagrant plugin.json is not properly initialized: #{e}"
 end
+
+%transfiletriggerin -p %{_bindir}/ruby -- %{dirname:%{vagrant_plugin_spec}}
+begin
+  $LOAD_PATH.unshift "%{vagrant_dir}/lib"
+  begin
+    require "vagrant/plugin/manager"
+  rescue LoadError => e
+    raise
+  end
+
+  $stdin.each_line do |gemspec_file|
+    next if gemspec_file =~ /\/%{name}-%{version}.gemspec$/
+
+    spec = Gem::Specification.load(gemspec_file.strip)
+    Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "%{vagrant_plugin_conf}")).add_plugin spec.name
+  end
+rescue => e
+  puts "Vagrant plugin register error: #{e}"
+end
+
+%transfiletriggerun -p %{_bindir}/ruby -- %{dirname:%{vagrant_plugin_spec}}
+begin
+  $LOAD_PATH.unshift "%{vagrant_dir}/lib"
+  begin
+    require "vagrant/plugin/manager"
+  rescue LoadError => e
+    raise
+  end
+
+  $stdin.each_line do |gemspec_file|
+    next if gemspec_file =~ /\/%{name}-%{version}.gemspec$/
+
+    spec = Gem::Specification.load(gemspec_file.strip)
+    Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "%{vagrant_plugin_conf}")).remove_plugin spec.name
+  end
+rescue => e
+  puts "Vagrant plugin un-register error: #{e}"
+end
  
 %files
 # Explicitly include Vagrant plugins directory strucure to avoid accidentally
@@ -267,6 +305,7 @@ end
 %changelog
 * Mon Feb 13 2017 Vít Ondruch <vondruch@redhat.com> - 1.9.1-1
 - Update to Vagrant 1.9.1.
+- Provide filetriggers to replace plugin (un)register macros.
 
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.8.7-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
