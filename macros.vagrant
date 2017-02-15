@@ -13,6 +13,9 @@
 
 # Plugin configuration file location.
 %vagrant_plugin_conf_dir %{_sharedstatedir}/%{name}
+# TODO: Drop the link and keep the file in %%vagrant_embedded_dir.
+# https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/SKJVY6KZYP24B4KOXLX3BBI5DWSJUEK5/
+%vagrant_plugin_conf_link %{vagrant_embedded_dir}/plugins.json
 %vagrant_plugin_conf %{vagrant_plugin_conf_dir}/plugins.json
 
 # Install gem into appropriate directory.

@@ -201,8 +201,9 @@ begin
     raise
   end;
 
-  unless File.exist?("%{vagrant_plugin_conf}")
+  unless File.exist?("%{vagrant_plugin_conf_link}")
     Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "%{vagrant_plugin_conf}")).save!
+    File.symlink "%{vagrant_plugin_conf}", "%{vagrant_plugin_conf_link}"
   end
 rescue => e
   puts "Vagrant plugin.json is not properly initialized: #{e}"
@@ -221,7 +222,7 @@ begin
     next if gemspec_file =~ /\/%{name}-%{version}.gemspec$/
 
     spec = Gem::Specification.load(gemspec_file.strip)
-    Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "%{vagrant_plugin_conf}")).add_plugin spec.name
+    Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "%{vagrant_plugin_conf_link}")).add_plugin spec.name
   end
 rescue => e
   puts "Vagrant plugin register error: #{e}"
@@ -240,7 +241,7 @@ begin
     next if gemspec_file =~ /\/%{name}-%{version}.gemspec$/
 
     spec = Gem::Specification.load(gemspec_file.strip)
-    Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "%{vagrant_plugin_conf}")).remove_plugin spec.name
+    Vagrant::Plugin::StateFile.new(Pathname.new(File.expand_path "%{vagrant_plugin_conf_link}")).remove_plugin spec.name
   end
 rescue => e
   puts "Vagrant plugin un-register error: #{e}"
@@ -283,13 +284,13 @@ end
 %{vagrant_plugin_instdir}/version.txt
 %exclude %{vagrant_plugin_cache}
 %{vagrant_plugin_spec}
+%dir %{vagrant_plugin_conf_dir}
+%ghost %{vagrant_plugin_conf_link}
+%ghost %{vagrant_plugin_conf}
 # TODO: This is suboptimal and may break, but can't see much better way ...
 %dir %{dirname:%{bashcompletion_dir}}
 %dir %{bashcompletion_dir}
 %{bashcompletion_dir}/%{name}
-%{vagrant_embedded_dir}/plugins.json
-%dir %{vagrant_plugin_conf_dir}
-%ghost %{vagrant_plugin_conf}
 %{_rpmconfigdir}/macros.d/macros.%{name}
 
 %files doc
