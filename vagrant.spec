@@ -51,7 +51,6 @@ Requires: rubygem(listen) < 3.2
 Requires: rubygem(log4r) >= 1.1.9
 Requires: rubygem(log4r) < 1.1.11
 Requires: rubygem(net-ssh) >= 3.0
-Requires: rubygem(net-ssh) < 4
 Requires: rubygem(net-scp) >= 1.1.0
 Requires: rubygem(nokogiri) >= 1.6
 Requires: rubygem(net-sftp) >= 2.1
@@ -307,6 +306,7 @@ end
 * Mon Feb 13 2017 Vít Ondruch <vondruch@redhat.com> - 1.9.1-1
 - Update to Vagrant 1.9.1.
 - Provide filetriggers to replace plugin (un)register macros.
+- Relax rubygem-net-ssh dependency.
 
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.8.7-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
