@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.9.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -83,6 +83,11 @@ BuildRequires: rubygem(webmock)
 BuildRequires: rubygem(fake_ftp)
 BuildRequires: pkgconfig(bash-completion)
 BuildArch: noarch
+
+# vagrant-atomic was retired in F26, since it was merged into Vagrant.
+# https://github.com/projectatomic/vagrant-atomic/issues/5
+# https://github.com/mitchellh/vagrant/pull/5847
+Obsoletes: vagrant-atomic <= 0.1.0-4
 
 # Since Vagrant itself is installed on the same place as its plugins
 # the vagrant_plugin macros can be reused in the spec file, but the plugin
@@ -303,6 +308,9 @@ end
 
 
 %changelog
+* Tue Feb 28 2017 Vít Ondruch <vondruch@redhat.com> - 1.9.1-2
+- Obsolete vagrant-atomic, since it is now merged in Vagrant.
+
 * Mon Feb 13 2017 Vít Ondruch <vondruch@redhat.com> - 1.9.1-1
 - Update to Vagrant 1.9.1.
 - Provide filetriggers to replace plugin (un)register macros.
