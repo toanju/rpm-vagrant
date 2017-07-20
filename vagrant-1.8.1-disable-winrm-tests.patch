@@ -2,7 +2,7 @@ diff --git a/test/unit/plugins/provisioners/ansible/provisioner_test.rb b/test/u
 index 31354a7..f2dfd0f 100644
 --- a/test/unit/plugins/provisioners/ansible/provisioner_test.rb
 +++ b/test/unit/plugins/provisioners/ansible/provisioner_test.rb
-@@ -498,55 +498,6 @@ VF
+@@ -497,55 +497,6 @@ VF
        end
      end
  
@@ -31,13 +31,13 @@ index 31354a7..f2dfd0f 100644
 -
 -      it "generates an inventory with winrm connection settings" do
 -
--        expect(Vagrant::Util::Subprocess).to receive(:execute).with { |*args|
+-        expect(Vagrant::Util::Subprocess).to receive(:execute).with(any_args) { |*args|
 -          expect(config.inventory_path).to be_nil
--          expect(File.exists?(generated_inventory_file)).to be_true
+-          expect(File.exists?(generated_inventory_file)).to be(true)
 -          inventory_content = File.read(generated_inventory_file)
 -
 -          expect(inventory_content).to include("machine1 ansible_connection=winrm ansible_ssh_host=127.0.0.1 ansible_ssh_port=55986 ansible_ssh_user='winner' ansible_ssh_pass='winword'\n")
--        }
+-        }.and_return(default_execute_result)
 -      end
 -
 -      describe "with force_remote_user option disabled" do
@@ -46,12 +46,12 @@ index 31354a7..f2dfd0f 100644
 -        end
 -
 -        it "doesn't set the ansible remote user in inventory and use '--user' argument with the vagrant ssh username" do
--          expect(Vagrant::Util::Subprocess).to receive(:execute).with { |*args|
+-          expect(Vagrant::Util::Subprocess).to receive(:execute).with(any_args) { |*args|
 -            inventory_content = File.read(generated_inventory_file)
 -
 -            expect(inventory_content).to include("machine1 ansible_connection=winrm ansible_ssh_host=127.0.0.1 ansible_ssh_port=55986 ansible_ssh_pass='winword'\n")
 -            expect(args).to include("--user=testuser")
--          }
+-          }.and_return(default_execute_result)
 -        end
 -      end
 -    end

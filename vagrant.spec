@@ -1,10 +1,10 @@
 %global bashcompletion_dir %(pkg-config --variable=completionsdir bash-completion 2> /dev/null || :)
 
-%global vagrant_spec_commit 9bba7e1228379c0a249a06ce76ba8ea7d276afbe
+%global vagrant_spec_commit e623a5694912c539ac2657e38a372d5e8c93441d
 
 Name: vagrant
-Version: 1.9.1
-Release: 3%{?dist}
+Version: 1.9.8
+Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -14,7 +14,7 @@ Source0: https://github.com/mitchellh/%{name}/archive/v%{version}/%{name}-%{vers
 Source1: binstub
 # The library has no official release yet. But since it is just test
 # dependency, it should be fine to include the source right here.
-# wget https://github.com/mitchellh/vagrant-spec/archive/9bba7e1228379c0a249a06ce76ba8ea7d276afbe/vagrant-spec-9bba7e1228379c0a249a06ce76ba8ea7d276afbe.tar.gz
+# wget https://github.com/mitchellh/vagrant-spec/archive/2f0fb10862b2d19861c584be9d728080ba1f5d33/vagrant-spec-2f0fb10862b2d19861c584be9d728080ba1f5d33.tar.gz
 Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit}/%{name}-spec-%{vagrant_spec_commit}.tar.gz
 # Monkey-patching needed for Vagrant to work until the respective patches
 # for RubyGems and Bundler are in place
@@ -24,7 +24,7 @@ Source4: macros.vagrant
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
 
-Patch0: vagrant-1.9.1-fix-dependencies.patch
+Patch0: vagrant-1.9.8-fix-dependencies.patch
 
 # Disable ansible winrm tests 
 Patch1: vagrant-1.8.1-disable-winrm-tests.patch
@@ -52,7 +52,6 @@ Requires: rubygem(log4r) >= 1.1.9
 Requires: rubygem(log4r) < 1.1.11
 Requires: rubygem(net-ssh) >= 3.0
 Requires: rubygem(net-scp) >= 1.1.0
-Requires: rubygem(nokogiri) >= 1.6
 Requires: rubygem(net-sftp) >= 2.1
 Requires: rubygem(net-sftp) < 3
 Requires: rubygem(rest-client) < 3.0
@@ -71,11 +70,11 @@ BuildRequires: rubygem(hashicorp-checkpoint)
 BuildRequires: rubygem(log4r)
 BuildRequires: rubygem(net-ssh)
 BuildRequires: rubygem(net-scp)
-BuildRequires: rubygem(nokogiri)
 BuildRequires: rubygem(i18n)
 BuildRequires: rubygem(json)
 BuildRequires: rubygem(erubis)
-BuildRequires: rubygem(rspec) < 3
+BuildRequires: rubygem(rspec)
+BuildRequires: rubygem(rspec-its)
 BuildRequires: rubygem(net-sftp)
 BuildRequires: rubygem(rest-client)
 BuildRequires: rubygem(thor)
@@ -308,6 +307,10 @@ end
 
 
 %changelog
+* Thu Aug 24 2017 Pavel Valena <pvalena@redhat.com> - 1.9.8-1
+- Update to Vagrant 1.9.8 (rhbz#1427505).
+- Remove Nokogiri dependency.
+
 * Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org>
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 
