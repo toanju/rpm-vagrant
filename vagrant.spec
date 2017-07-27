@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.9.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -308,6 +308,9 @@ end
 
 
 %changelog
+* Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org>
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Tue Feb 28 2017 Vít Ondruch <vondruch@redhat.com> - 1.9.1-2
 - Obsolete vagrant-atomic, since it is now merged in Vagrant.
 
