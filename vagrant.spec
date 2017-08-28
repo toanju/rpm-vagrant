@@ -310,6 +310,7 @@ end
 * Thu Aug 24 2017 Pavel Valena <pvalena@redhat.com> - 1.9.8-1
 - Update to Vagrant 1.9.8 (rhbz#1427505).
 - Remove Nokogiri dependency.
+- Use VAGRANT_PREFERRED_PROVIDERS in binstub instead of VAGRANT_DEFAULT_PROVIDER.
 
 * Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org>
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild

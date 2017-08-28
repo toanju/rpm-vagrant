@@ -4,6 +4,11 @@
 # Vagrant installation directory. This sets up proper environment variables
 # so that everything loads and compiles to proper directories.
 
+# Load defaults, especially VAGRANT_PREFERRED_PROVIDERS
+if [ -r /etc/default/vagrant ]; then
+  source /etc/default/vagrant
+fi
+
 # Export gem paths so that we use the isolated gems.
 # TODO: Should be replaced from .spec file.
 # ruby -e "print Gem.path.join(':')"
@@ -42,10 +47,11 @@ export VAGRANT_DETECTED_OS="${OS}"
 # Export the VAGRANT_EXECUTABLE so that pre-rubygems can optimize a bit
 export VAGRANT_EXECUTABLE="${VAGRANT_INSTALLER_EMBEDDED_DIR}/gems/bin/vagrant"
 
-# libvirt provider as a default
-if [ -z $VAGRANT_DEFAULT_PROVIDER ]; then
-  export VAGRANT_DEFAULT_PROVIDER=libvirt
+# Set providers' preferred order(priority) if not already set
+if [ -z ${VAGRANT_PREFERRED_PROVIDERS+empty} ]; then
+  VAGRANT_PREFERRED_PROVIDERS=libvirt,docker
 fi
+export VAGRANT_PREFERRED_PROVIDERS
 
 # Call the actual Vagrant bin with our arguments
 exec ruby "${VAGRANT_EXECUTABLE}" "$@"
