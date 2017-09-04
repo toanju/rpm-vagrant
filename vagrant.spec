@@ -33,6 +33,9 @@ Patch1: vagrant-1.8.1-disable-winrm-tests.patch
 # https://github.com/mitchellh/vagrant/pull/8284
 Patch2: vagrant-1.9.1-Fix-Ruby-2.4-compatibility.patch
 
+# Use system certificates(split to standalone patch)
+Patch3: vagrant-1.9.8-use-system-certificates.patch
+
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
 # Explicitly specify MRI, since Vagrant does not work with JRuby ATM.
@@ -112,6 +115,7 @@ Documentation for %{name}.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 gem build %{name}.gemspec

@@ -1,0 +1,27 @@
+From 7486aa2ce950f55a4be9049d514c412d7e45ddef Mon Sep 17 00:00:00 2001
+From: Pavel Valena <pvalena@redhat.com>
+Date: Thu, 20 Jul 2017 15:01:06 +0200
+Subject: [PATCH] Use system certificates
+
+---
+ lib/vagrant/util/downloader.rb |  5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/lib/vagrant/util/downloader.rb b/lib/vagrant/util/downloader.rb
+index 03e6238..9a02a85 100644
+--- a/lib/vagrant/util/downloader.rb
++++ b/lib/vagrant/util/downloader.rb
+@@ -297,8 +297,9 @@ module Vagrant
+         # If we're in Vagrant, then we use the packaged CA bundle
+         if Vagrant.in_installer?
+           subprocess_options[:env] ||= {}
+-          subprocess_options[:env]["CURL_CA_BUNDLE"] =
+-            File.expand_path("cacert.pem", ENV["VAGRANT_INSTALLER_EMBEDDED_DIR"])
++	  #Use system certificates.
++          #subprocess_options[:env]["CURL_CA_BUNDLE"] =
++          #  File.expand_path("cacert.pem", ENV["VAGRANT_INSTALLER_EMBEDDED_DIR"])
+         end
+ 
+         return [options, subprocess_options]
+-- 
+2.5.0
