@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 #
 # This is a wrapper to properly execute Vagrant within the embedded
 # Vagrant installation directory. This sets up proper environment variables
@@ -18,9 +18,7 @@ export GEM_PATH="/usr/share/gems:/usr/share/vagrant/gems"
 #
 # This needs to be set because Bundler includes gem paths
 # from RubyGems' Gem.paths.
-if [ -z $VAGRANT_HOME ]; then
-  VAGRANT_HOME=$(eval echo "~/.vagrant.d")
-fi
+VAGRANT_HOME=${VAGRANT_HOME:-~/.vagrant.d}
 export GEM_HOME="$VAGRANT_HOME/gems"
 
 
