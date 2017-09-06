@@ -41,23 +41,16 @@ Requires: ruby(rubygems) >= 1.3.6
 # Explicitly specify MRI, since Vagrant does not work with JRuby ATM.
 Requires: ruby
 Requires: rubygem(hashicorp-checkpoint) >= 0.1.1
-Requires: rubygem(hashicorp-checkpoint) < 0.2
 Requires: rubygem(childprocess) >= 0.5.0
-Requires: rubygem(childprocess) < 0.6
 Requires: rubygem(erubis) >= 2.7.0
-Requires: rubygem(erubis) < 2.8
 Requires: rubygem(i18n) >= 0.6.0
-Requires: rubygem(i18n) <= 0.8.0
 Requires: rubygem(json)
 Requires: rubygem(listen) >= 3.1.5
-Requires: rubygem(listen) < 3.2
 Requires: rubygem(log4r) >= 1.1.9
-Requires: rubygem(log4r) < 1.1.11
-Requires: rubygem(net-ssh) >= 3.0
-Requires: rubygem(net-scp) >= 1.1.0
+Requires: rubygem(net-ssh) >= 4.1.0
+Requires: rubygem(net-scp) >= 1.2.0
 Requires: rubygem(net-sftp) >= 2.1
-Requires: rubygem(net-sftp) < 3
-Requires: rubygem(rest-client) < 3.0
+Requires: rubygem(rest-client) >= 1.6.0
 Requires: bsdtar
 Requires: curl
 
@@ -315,6 +308,7 @@ end
 - Update to Vagrant 1.9.8 (rhbz#1427505).
 - Remove Nokogiri dependency.
 - Use VAGRANT_PREFERRED_PROVIDERS in binstub instead of VAGRANT_DEFAULT_PROVIDER.
+- Use only bottom contstraint for Requires.
 
 * Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org>
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
