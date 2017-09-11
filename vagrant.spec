@@ -1,10 +1,10 @@
 %global bashcompletion_dir %(pkg-config --variable=completionsdir bash-completion 2> /dev/null || :)
 
-%global vagrant_spec_commit e623a5694912c539ac2657e38a372d5e8c93441d
+%global vagrant_spec_commit 7ac8b4191de578e345b29acaf62ecc72c8e73be1
 
 Name: vagrant
-Version: 1.9.8
-Release: 2%{?dist}
+Version: 2.0.1
+Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -14,7 +14,7 @@ Source0: https://github.com/mitchellh/%{name}/archive/v%{version}/%{name}-%{vers
 Source1: binstub
 # The library has no official release yet. But since it is just test
 # dependency, it should be fine to include the source right here.
-# wget https://github.com/mitchellh/vagrant-spec/archive/2f0fb10862b2d19861c584be9d728080ba1f5d33/vagrant-spec-2f0fb10862b2d19861c584be9d728080ba1f5d33.tar.gz
+# wget https://github.com/mitchellh/vagrant-spec/archive/7ac8b4191de578e345b29acaf62ecc72c8e73be1/vagrant-spec-7ac8b4191de578e345b29acaf62ecc72c8e73be1.tar.gz
 Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit}/%{name}-spec-%{vagrant_spec_commit}.tar.gz
 # Monkey-patching needed for Vagrant to work until the respective patches
 # for RubyGems and Bundler are in place
@@ -24,17 +24,7 @@ Source4: macros.vagrant
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
 
-Patch0: vagrant-1.9.8-fix-dependencies.patch
-
-# Disable ansible winrm tests 
-Patch1: vagrant-1.8.1-disable-winrm-tests.patch
-
-# Use Integer instead of Fixnum for Ruby 2.4+ compatibility.
-# https://github.com/mitchellh/vagrant/pull/8284
-Patch2: vagrant-1.9.1-Fix-Ruby-2.4-compatibility.patch
-
-# Use system certificates(split to standalone patch)
-Patch3: vagrant-1.9.8-use-system-certificates.patch
+Patch0: vagrant-2.0.1-fix-dependencies.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -77,6 +67,7 @@ BuildRequires: rubygem(thor)
 BuildRequires: rubygem(webmock)
 BuildRequires: rubygem(fake_ftp)
 BuildRequires: pkgconfig(bash-completion)
+BuildRequires: %{_bindir}/ssh
 BuildArch: noarch
 
 # vagrant-atomic was retired in F26, since it was merged into Vagrant.
@@ -106,9 +97,6 @@ Documentation for %{name}.
 %setup -q -b2
 
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 %build
 gem build %{name}.gemspec
@@ -174,8 +162,12 @@ mv ../vagrant-spec{-%{vagrant_spec_commit},}
 # Remove the git reference, which is useless in our case.
 sed -i '/git/ s/^/#/' ../vagrant-spec/vagrant-spec.gemspec
 
-# Relax the thor dependency, since Fedora ships with newer version.
+# Relax the dependencies, since Fedora ships with newer versions.
 sed -i '/thor/ s/~>/>=/' ../vagrant-spec/vagrant-spec.gemspec
+sed -i '/rspec/ s/~>/>=/' ./vagrant.gemspec
+sed -i '/rspec/ s/~>/>=/' ../vagrant-spec/vagrant-spec.gemspec
+# TODO: package newer childproccess
+sed -i '/childprocess/ s/~>/<=/' ../vagrant-spec/vagrant-spec.gemspec
 
 #Insert new test dependencies
 sed -i '25 i\  spec.add_dependency "webmock"' ../vagrant-spec/vagrant-spec.gemspec
@@ -185,9 +177,16 @@ sed -i '26 i\  spec.add_dependency "fake_ftp"' ../vagrant-spec/vagrant-spec.gems
 rm -rf test/unit/plugins/communicators/winrm
 sed -i '/it "eager loads WinRM" do/,/^      end$/ s/^/#/' test/unit/vagrant/machine_test.rb
 sed -i '/it "should return the specified communicator if given" do/,/^    end$/ s/^/#/' test/unit/vagrant/machine_test.rb
+sed -i '/^    context "with winrm communicator" do$/,/^    end$/ s/^/#/' \
+  test/unit/plugins/provisioners/ansible/provisioner_test.rb
+
+# Disable test that requires bundler
+# https://github.com/hashicorp/vagrant/issues/9273
+mv test/unit/vagrant/util/env_test.rb{,.disable}
 
 # Test suite must be executed in order.
-ruby -I.:lib -e 'Dir.glob("test/unit/**/*_test.rb").sort.each &method(:require)'
+find test/unit/ -name '*_test.rb' -type f | xargs rspec
+
 
 %pre
 getent group vagrant >/dev/null || groupadd -r vagrant
@@ -304,6 +303,9 @@ end
 
 
 %changelog
+* Mon Dec 18 2017 Pavel Valena <pvalena@redhat.com> - 2.0.1-1
+- Update to Vagrant 2.0.1.
+
 * Tue Dec 12 2017 Vít Ondruch <vondruch@redhat.com> - 1.9.8-2
 - Fix plugin registration issues caused by changes in RPM (rhbz#1523296).
 
