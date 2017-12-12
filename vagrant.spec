@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 1.9.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -209,7 +209,7 @@ rescue => e
   puts "Vagrant plugin.json is not properly initialized: #{e}"
 end
 
-%transfiletriggerin -p %{_bindir}/ruby -- %{dirname:%{vagrant_plugin_spec}}
+%transfiletriggerin -p %{_bindir}/ruby -- %{dirname:%{vagrant_plugin_spec}}/
 begin
   $LOAD_PATH.unshift "%{vagrant_dir}/lib"
   begin
@@ -228,7 +228,7 @@ rescue => e
   puts "Vagrant plugin register error: #{e}"
 end
 
-%transfiletriggerun -p %{_bindir}/ruby -- %{dirname:%{vagrant_plugin_spec}}
+%transfiletriggerun -p %{_bindir}/ruby -- %{dirname:%{vagrant_plugin_spec}}/
 begin
   $LOAD_PATH.unshift "%{vagrant_dir}/lib"
   begin
@@ -304,6 +304,9 @@ end
 
 
 %changelog
+* Tue Dec 12 2017 Vít Ondruch <vondruch@redhat.com> - 1.9.8-2
+- Fix plugin registration issues caused by changes in RPM (rhbz#1523296).
+
 * Thu Aug 24 2017 Pavel Valena <pvalena@redhat.com> - 1.9.8-1
 - Update to Vagrant 1.9.8 (rhbz#1427505).
 - Remove Nokogiri dependency.
