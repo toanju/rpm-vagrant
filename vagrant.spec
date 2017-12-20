@@ -184,8 +184,8 @@ sed -i '/^    context "with winrm communicator" do$/,/^    end$/ s/^/#/' \
 # https://github.com/hashicorp/vagrant/issues/9273
 mv test/unit/vagrant/util/env_test.rb{,.disable}
 
-# Test suite must be executed in order.
-find test/unit/ -name '*_test.rb' -type f | xargs rspec
+# Rake solves the requires issues for tests
+rake -f tasks/test.rake test:unit
 
 
 %pre
