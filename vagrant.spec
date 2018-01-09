@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 2.0.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -101,7 +101,10 @@ Documentation for %{name}.
 %build
 gem build %{name}.gemspec
 
-gem install -V --local --install-dir .%{vagrant_plugin_dir} \
+gem install -V --local \
+  --no-user-install \
+  --install-dir .%{vagrant_plugin_dir} \
+  --bindir .%{vagrant_plugin_dir}/bin \
   --ignore-dependencies --force --no-document --backtrace \
   %{name}-%{version}.gem
 
@@ -303,6 +306,9 @@ end
 
 
 %changelog
+* Mon Jan 08 2018 Vít Ondruch <vondruch@redhat.com> - 2.0.1-2
+- Fix Ruby 2.5 compatibilty.
+
 * Mon Dec 18 2017 Pavel Valena <pvalena@redhat.com> - 2.0.1-1
 - Update to Vagrant 2.0.1.
 
