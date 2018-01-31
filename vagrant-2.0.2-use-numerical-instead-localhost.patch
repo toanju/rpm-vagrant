@@ -1,0 +1,32 @@
+From a102bc064f2b0d97cc6e67bb4f5e4a1bd951e311 Mon Sep 17 00:00:00 2001
+From: Pavel Valena <pvalena@redhat.com>
+Date: Wed, 31 Jan 2018 19:08:35 +0100
+Subject: [PATCH] Use 127.0.0.1 instead of localhost
+
+in test is_port_open_test.rb
+---
+ test/unit/vagrant/util/is_port_open_test.rb | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/test/unit/vagrant/util/is_port_open_test.rb b/test/unit/vagrant/util/is_port_open_test.rb
+index 71ee1db3b7..ea70425755 100644
+--- a/test/unit/vagrant/util/is_port_open_test.rb
++++ b/test/unit/vagrant/util/is_port_open_test.rb
+@@ -36,7 +36,7 @@
+     end
+ 
+     # Verify that we report the port is open
+-    expect(klass.is_port_open?("localhost", open_port)).to be
++    expect(klass.is_port_open?("127.0.0.1", open_port)).to be
+ 
+     # Kill the thread
+     thr[:die] = true
+@@ -47,7 +47,7 @@
+     # This CAN fail, since port 52811 might actually be in use, but I'm
+     # not sure what to do except choose some random port and hope for the
+     # best, really.
+-    expect(klass.is_port_open?("localhost", closed_port)).not_to be
++    expect(klass.is_port_open?("127.0.0.1", closed_port)).not_to be
+   end
+ end
+ 

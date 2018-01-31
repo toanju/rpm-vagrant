@@ -5,7 +5,7 @@ Subject: [PATCH] Fix dependencies for Vagrant 2.0.1.
 
 ---
  vagrant.gemspec |   25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
 diff --git a/vagrant.gemspec b/vagrant.gemspec
 index c92ca17..aeee52f 100644
@@ -15,7 +15,7 @@ index c92ca17..aeee52f 100644
    s.summary       = "Build and distribute virtualized development environments."
    s.description   = "Vagrant is a tool for building and distributing virtualized development environments."
  
--  s.required_ruby_version     = "~> 2.2", "< 2.5"
+-  s.required_ruby_version     = "~> 2.2", "< 2.6"
 +  s.required_ruby_version     = "~> 2.2"
    s.required_rubygems_version = ">= 1.3.6"
    s.rubyforge_project         = "vagrant"
@@ -25,10 +25,9 @@ index c92ca17..aeee52f 100644
    s.add_dependency "erubis", "~> 2.7.0"
    s.add_dependency "i18n", ">= 0.6.0", "<= 0.8.0"
    s.add_dependency "listen", "~> 3.1.5"
-   s.add_dependency "hashicorp-checkpoint", "~> 0.1.1"
+   s.add_dependency "hashicorp-checkpoint", "~> 0.1.5"
    s.add_dependency "log4r", "~> 1.1.9", "< 1.1.11"
--  s.add_dependency "net-ssh", "~> 4.1.0"
-+  s.add_dependency "net-ssh", ">= 4.1.0"
+   s.add_dependency "net-ssh", "~> 4.2.0"
    s.add_dependency "net-sftp", "~> 2.1"
 -  s.add_dependency "net-scp", "~> 1.2.0"
 -  s.add_dependency "rb-kqueue", "~> 0.2.0"

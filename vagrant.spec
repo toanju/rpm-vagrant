@@ -1,10 +1,10 @@
 %global bashcompletion_dir %(pkg-config --variable=completionsdir bash-completion 2> /dev/null || :)
 
-%global vagrant_spec_commit 7ac8b4191de578e345b29acaf62ecc72c8e73be1
+%global vagrant_spec_commit f3daedaac493ebc0ba1a96c915423a329e09e84a
 
 Name: vagrant
-Version: 2.0.1
-Release: 2%{?dist}
+Version: 2.0.2
+Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -14,7 +14,7 @@ Source0: https://github.com/mitchellh/%{name}/archive/v%{version}/%{name}-%{vers
 Source1: binstub
 # The library has no official release yet. But since it is just test
 # dependency, it should be fine to include the source right here.
-# wget https://github.com/mitchellh/vagrant-spec/archive/7ac8b4191de578e345b29acaf62ecc72c8e73be1/vagrant-spec-7ac8b4191de578e345b29acaf62ecc72c8e73be1.tar.gz
+# wget https://github.com/mitchellh/vagrant-spec/archive/f3daedaac493ebc0ba1a96c915423a329e09e84a/vagrant-spec-f3daedaac493ebc0ba1a96c915423a329e09e84a.tar.gz
 Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit}/%{name}-spec-%{vagrant_spec_commit}.tar.gz
 # Monkey-patching needed for Vagrant to work until the respective patches
 # for RubyGems and Bundler are in place
@@ -24,20 +24,24 @@ Source4: macros.vagrant
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
 
-Patch0: vagrant-2.0.1-fix-dependencies.patch
+Patch0: vagrant-2.0.2-fix-dependencies.patch
+
+# Use 127.0.0.1 instead of localhost in tests
+# https://github.com/hashicorp/vagrant/pull/9422
+Patch1: vagrant-2.0.2-use-numerical-instead-localhost.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
 # Explicitly specify MRI, since Vagrant does not work with JRuby ATM.
 Requires: ruby
-Requires: rubygem(hashicorp-checkpoint) >= 0.1.1
+Requires: rubygem(hashicorp-checkpoint) >= 0.1.5
 Requires: rubygem(childprocess) >= 0.5.0
 Requires: rubygem(erubis) >= 2.7.0
 Requires: rubygem(i18n) >= 0.6.0
 Requires: rubygem(json)
 Requires: rubygem(listen) >= 3.1.5
 Requires: rubygem(log4r) >= 1.1.9
-Requires: rubygem(net-ssh) >= 4.1.0
+Requires: rubygem(net-ssh) >= 4.2.0
 Requires: rubygem(net-scp) >= 1.2.0
 Requires: rubygem(net-sftp) >= 2.1
 Requires: rubygem(rest-client) >= 1.6.0
@@ -158,6 +162,8 @@ EOF
 
 
 %check
+cat %{PATCH1} | patch -p1
+
 # Adjust the vagrant-spec directory name.
 rm -rf ../vagrant-spec
 mv ../vagrant-spec{-%{vagrant_spec_commit},}
@@ -306,6 +312,9 @@ end
 
 
 %changelog
+* Wed Jan 31 2018 Pavel Valena <pvalena@redhat.com> - 2.0.2-1
+- Update to Vagrant 2.0.2.
+
 * Mon Jan 08 2018 Vít Ondruch <vondruch@redhat.com> - 2.0.1-2
 - Fix Ruby 2.5 compatibilty.
 
