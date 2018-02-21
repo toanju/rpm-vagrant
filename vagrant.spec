@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 2.0.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -312,6 +312,10 @@ end
 
 
 %changelog
+* Wed Feb 21 2018 Pavel Valena <pvalena@redhat.com> - 2.0.2-2
+- Allow rubygem-i18n ~> 1.0
+  https://github.com/rails/rails/pull/31991
+
 * Wed Jan 31 2018 Pavel Valena <pvalena@redhat.com> - 2.0.2-1
 - Update to Vagrant 2.0.2.
 
