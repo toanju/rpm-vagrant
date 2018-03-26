@@ -3,8 +3,8 @@
 %global vagrant_spec_commit f3daedaac493ebc0ba1a96c915423a329e09e84a
 
 Name: vagrant
-Version: 2.0.2
-Release: 2%{?dist}
+Version: 2.0.3
+Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -25,10 +25,6 @@ Source4: macros.vagrant
 %{?load:%{SOURCE4}}
 
 Patch0: vagrant-2.0.2-fix-dependencies.patch
-
-# Use 127.0.0.1 instead of localhost in tests
-# https://github.com/hashicorp/vagrant/pull/9422
-Patch1: vagrant-2.0.2-use-numerical-instead-localhost.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -162,8 +158,6 @@ EOF
 
 
 %check
-cat %{PATCH1} | patch -p1
-
 # Adjust the vagrant-spec directory name.
 rm -rf ../vagrant-spec
 mv ../vagrant-spec{-%{vagrant_spec_commit},}
@@ -307,11 +301,13 @@ end
 %{vagrant_plugin_instdir}/Gemfile
 %{vagrant_plugin_instdir}/Rakefile
 %{vagrant_plugin_instdir}/tasks
-%{vagrant_plugin_instdir}/test
 %{vagrant_plugin_instdir}/vagrant-spec.config.example.rb
 
 
 %changelog
+* Mon Mar 26 2018 Pavel Valena <pvalena@redhat.com> - 2.0.3-1
+- Update to Vagrant 2.0.3
+
 * Wed Feb 21 2018 Pavel Valena <pvalena@redhat.com> - 2.0.2-2
 - Allow rubygem-i18n ~> 1.0
   https://github.com/rails/rails/pull/31991
