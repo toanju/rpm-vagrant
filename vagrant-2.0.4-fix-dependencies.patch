@@ -1,17 +1,17 @@
 From 7486aa2ce950f55a4be9049d514c412d7e45ddef Mon Sep 17 00:00:00 2001
 From: Pavel Valena <pvalena@redhat.com>
 Date: Thu, 20 Jul 2017 15:01:06 +0200
-Subject: [PATCH] Fix dependencies for Vagrant 2.0.1.
+Subject: [PATCH] Fix dependencies for Vagrant 2.0.4.
 
 ---
- vagrant.gemspec |   25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
+ vagrant.gemspec |   29 ++++++++++++++++-------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
 
 diff --git a/vagrant.gemspec b/vagrant.gemspec
 index c92ca17..aeee52f 100644
 --- a/vagrant.gemspec
 +++ b/vagrant.gemspec
-@@ -12,35 +12,38 @@ Gem::Specification.new do |s|
+@@ -12,37 +12,40 @@ Gem::Specification.new do |s|
    s.summary       = "Build and distribute virtualized development environments."
    s.description   = "Vagrant is a tool for building and distributing virtualized development environments."
  
@@ -37,10 +37,14 @@ index c92ca17..aeee52f 100644
 +  # s.add_dependency "rb-kqueue", "~> 0.2.0"
    s.add_dependency "rest-client", ">= 1.6.0", "< 3.0"
 -  s.add_dependency "wdm", "~> 0.1.0"
+-  s.add_dependency "win32-file", "~> 0.8.1"
+-  s.add_dependency "win32-file-security", "~> 1.0.10"
 -  s.add_dependency "winrm", "~> 2.1"
 -  s.add_dependency "winrm-fs", "~> 1.0"
 -  s.add_dependency "winrm-elevated", "~> 1.1"
 +  # s.add_dependency "wdm", "~> 0.1.0"
++  # s.add_dependency "win32-file", "~> 0.8.1"
++  # s.add_dependency "win32-file-security", "~> 1.0.10"
 +  # s.add_dependency "winrm", "~> 2.1"
 +  # s.add_dependency "winrm-fs", "~> 1.0"
 +  # s.add_dependency "winrm-elevated", "~> 1.1"

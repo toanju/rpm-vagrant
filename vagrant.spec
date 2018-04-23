@@ -3,7 +3,7 @@
 %global vagrant_spec_commit f3daedaac493ebc0ba1a96c915423a329e09e84a
 
 Name: vagrant
-Version: 2.0.3
+Version: 2.0.4
 Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
@@ -24,7 +24,7 @@ Source4: macros.vagrant
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
 
-Patch0: vagrant-2.0.2-fix-dependencies.patch
+Patch0: vagrant-2.0.4-fix-dependencies.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -305,6 +305,9 @@ end
 
 
 %changelog
+* Mon Apr 23 2018 Pavel Valena <pvalena@redhat.com> - 2.0.4-1
+- Update to Vagrant 2.0.4.
+
 * Mon Mar 26 2018 Pavel Valena <pvalena@redhat.com> - 2.0.3-1
 - Update to Vagrant 2.0.3
 
