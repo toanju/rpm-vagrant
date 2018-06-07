@@ -1,9 +1,9 @@
 %global bashcompletion_dir %(pkg-config --variable=completionsdir bash-completion 2> /dev/null || :)
 
-%global vagrant_spec_commit f3daedaac493ebc0ba1a96c915423a329e09e84a
+%global vagrant_spec_commit 9413ab298407114528766efefd1fb1ff24589636
 
 Name: vagrant
-Version: 2.0.4
+Version: 2.1.1
 Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
@@ -24,7 +24,7 @@ Source4: macros.vagrant
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
 
-Patch0: vagrant-2.0.4-fix-dependencies.patch
+Patch0: vagrant-2.1.1-fix-dependencies.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -305,6 +305,9 @@ end
 
 
 %changelog
+* Thu Jun 07 2018 Pavel Valena <pvalena@redhat.com> - 2.1.1-1
+- Update to Vagrant 2.1.1.
+
 * Mon Apr 23 2018 Pavel Valena <pvalena@redhat.com> - 2.0.4-1
 - Update to Vagrant 2.0.4.
 
