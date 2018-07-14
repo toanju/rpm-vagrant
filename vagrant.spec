@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 2.1.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -305,6 +305,9 @@ end
 
 
 %changelog
+* Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org>
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
 * Thu Jun 07 2018 Pavel Valena <pvalena@redhat.com> - 2.1.1-1
 - Update to Vagrant 2.1.1.
 
