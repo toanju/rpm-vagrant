@@ -3,8 +3,8 @@
 %global vagrant_spec_commit 9413ab298407114528766efefd1fb1ff24589636
 
 Name: vagrant
-Version: 2.1.1
-Release: 2%{?dist}
+Version: 2.1.2
+Release: 1%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -14,7 +14,7 @@ Source0: https://github.com/mitchellh/%{name}/archive/v%{version}/%{name}-%{vers
 Source1: binstub
 # The library has no official release yet. But since it is just test
 # dependency, it should be fine to include the source right here.
-# wget https://github.com/mitchellh/vagrant-spec/archive/f3daedaac493ebc0ba1a96c915423a329e09e84a/vagrant-spec-f3daedaac493ebc0ba1a96c915423a329e09e84a.tar.gz
+# wget https://github.com/mitchellh/vagrant-spec/archive/9413ab298407114528766efefd1fb1ff24589636/vagrant-spec-9413ab298407114528766efefd1fb1ff24589636.tar.gz
 Source2: https://github.com/mitchellh/%{name}-spec/archive/%{vagrant_spec_commit}/%{name}-spec-%{vagrant_spec_commit}.tar.gz
 # Monkey-patching needed for Vagrant to work until the respective patches
 # for RubyGems and Bundler are in place
@@ -24,7 +24,7 @@ Source4: macros.vagrant
 # fails on older Fedoras.
 %{?load:%{SOURCE4}}
 
-Patch0: vagrant-2.1.1-fix-dependencies.patch
+Patch0: vagrant-2.1.2-fix-dependencies.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -305,6 +305,9 @@ end
 
 
 %changelog
+* Wed Jul 18 2018 Pavel Valena <pvalena@redhat.com> - 2.1.2-1
+- Update to Vagrant 2.1.2.
+
 * Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org>
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
