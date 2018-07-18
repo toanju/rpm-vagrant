@@ -67,6 +67,7 @@ BuildRequires: rubygem(thor)
 BuildRequires: rubygem(webmock)
 BuildRequires: rubygem(fake_ftp)
 BuildRequires: pkgconfig(bash-completion)
+BuildRequires: help2man
 BuildRequires: %{_bindir}/ssh
 BuildArch: noarch
 
@@ -155,6 +156,14 @@ $LOAD_PATH.shift
 $LOAD_PATH.unshift '%{vagrant_dir}/lib'
 require 'vagrant/plugin/manager'
 EOF
+
+# Turn `vagrant --help` into man page.
+export GEM_PATH="%{gem_dir}:%{buildroot}/usr/share/vagrant/gems"
+# Needed to display help page without a warning.
+export VAGRANT_INSTALLER_ENV=1
+mkdir -p %{buildroot}%{_mandir}/man1
+help2man --no-discard-stderr -N -s1 -o %{buildroot}%{_mandir}/man1/%{name}.1 \
+    %{buildroot}/usr/share/%{name}/gems/gems/%{name}-%{version}/bin/%{name}
 
 
 %check
@@ -302,6 +311,7 @@ end
 %{vagrant_plugin_instdir}/Rakefile
 %{vagrant_plugin_instdir}/tasks
 %{vagrant_plugin_instdir}/vagrant-spec.config.example.rb
+%{_mandir}/man1/%{name}.1*
 
 
 %changelog
