@@ -1,0 +1,37 @@
+From 30e7e81eab1d7fbb65ceb79afe3133e8df59b1e4 Mon Sep 17 00:00:00 2001
+From: Chris Roberts <croberts@hashicorp.com>
+Date: Mon, 2 Apr 2018 11:53:25 -0700
+Subject: [PATCH] Make resolv-replace loading optional not automatic
+
+---
+ test/unit/vagrant/shared_helpers_test.rb              | 19 +++++++++++++++++++
+ 1 files changed, 19 insertions(+), 0 deletions(-)
+
+diff --git a/test/unit/vagrant/shared_helpers_test.rb b/test/unit/vagrant/shared_helpers_test.rb
+index da0f4c134f..64adf7bc68 100644
+--- a/test/unit/vagrant/shared_helpers_test.rb
++++ b/test/unit/vagrant/shared_helpers_test.rb
+@@ -143,4 +143,23 @@
+       expect(subject.prerelease?).to be(false)
+     end
+   end
++
++  describe "#enable_resolv_replace" do
++    it "should not attempt to require resolv-replace by default" do
++      expect(subject).not_to receive(:require).with("resolv-replace")
++      subject.enable_resolv_replace
++    end
++
++    it "should require resolv-replace when VAGRANT_ENABLE_RESOLV_REPLACE is set" do
++      expect(subject).to receive(:require).with("resolv-replace")
++      with_temp_env("VAGRANT_ENABLE_RESOLV_REPLACE" => "1"){ subject.enable_resolv_replace }
++    end
++
++    it "should not require resolv-replace when VAGRANT_DISABLE_RESOLV_REPLACE is set" do
++      expect(subject).not_to receive(:require).with("resolv-replace")
++      with_temp_env("VAGRANT_ENABLE_RESOLV_REPLACE" => "1", "VAGRANT_DISABLE_RESOLV_REPLACE" => "1") do
++        subject.enable_resolv_replace
++      end
++    end
++  end
+ end

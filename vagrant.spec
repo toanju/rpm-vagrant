@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 2.0.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -29,6 +29,12 @@ Patch0: vagrant-2.0.2-fix-dependencies.patch
 # Use 127.0.0.1 instead of localhost in tests
 # https://github.com/hashicorp/vagrant/pull/9422
 Patch1: vagrant-2.0.2-use-numerical-instead-localhost.patch
+
+# Make resolv-replace loading optional not automatic
+# https://bugzilla.redhat.com/show_bug.cgi?id=1605016
+# https://github.com/hashicorp/vagrant/pull/9644/commits/30e7e81eab1d7fbb65ceb79afe3133e8df59b1e4
+Patch2: vagrant-2.0.4-Make-resolv-replace-loading-optional.patch
+Patch3: vagrant-2.0.4-Make-resolv-replace-loading-optional-tests.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -101,6 +107,7 @@ Documentation for %{name}.
 %setup -q -b2
 
 %patch0 -p1
+%patch2 -p1
 
 %build
 gem build %{name}.gemspec
@@ -163,6 +170,7 @@ EOF
 
 %check
 cat %{PATCH1} | patch -p1
+cat %{PATCH3} | patch -p1
 
 # Adjust the vagrant-spec directory name.
 rm -rf ../vagrant-spec
@@ -312,6 +320,9 @@ end
 
 
 %changelog
+* Fri Jul 20 2018 Pavel Valena <pvalena@redhat.com> - 2.0.2-2
+- Fix: Make resolv-replace loading optional(rhbz#1605016).
+
 * Wed Jan 31 2018 Pavel Valena <pvalena@redhat.com> - 2.0.2-1
 - Update to Vagrant 2.0.2.
 

@@ -1,0 +1,58 @@
+From 30e7e81eab1d7fbb65ceb79afe3133e8df59b1e4 Mon Sep 17 00:00:00 2001
+From: Chris Roberts <croberts@hashicorp.com>
+Date: Mon, 2 Apr 2018 11:53:25 -0700
+Subject: [PATCH] Make resolv-replace loading optional not automatic
+
+---
+ lib/vagrant/shared_helpers.rb                         | 16 +++++++++-------
+ .../source/docs/other/environmental-variables.html.md |  9 ++++++---
+ 2 files changed, 15 insertions(+), 10 deletions(-)
+
+diff --git a/lib/vagrant/shared_helpers.rb b/lib/vagrant/shared_helpers.rb
+index 839ef55e6b..ae9cd15df4 100644
+--- a/lib/vagrant/shared_helpers.rb
++++ b/lib/vagrant/shared_helpers.rb
+@@ -134,15 +134,17 @@ def self.strict_dependency_enforcement
+   #
+   # @return [boolean] enabled or not
+   def self.enable_resolv_replace
+-    if !ENV["VAGRANT_DISABLE_RESOLV_REPLACE"]
+-      begin
+-        require "resolv-replace"
+-        true
+-      rescue
++    if ENV["VAGRANT_ENABLE_RESOLV_REPLACE"]
++      if !ENV["VAGRANT_DISABLE_RESOLV_REPLACE"]
++        begin
++          require "resolv-replace"
++          true
++        rescue
++          false
++        end
++      else
+         false
+       end
+-    else
+-      false
+     end
+   end
+ end
+diff --git a/website/source/docs/other/environmental-variables.html.md b/website/source/docs/other/environmental-variables.html.md
+index 8448640780..d474faf9b0 100644
+--- a/website/source/docs/other/environmental-variables.html.md
++++ b/website/source/docs/other/environmental-variables.html.md
+@@ -219,8 +219,11 @@ shared folders. Defaults to true if the option is not set. This can be overridde
+ on a per-folder basis within your Vagrantfile config by settings the
+ `SharedFoldersEnableSymlinksCreate` option to true.
+ 
++## `VAGRANT_ENABLE_RESOLV_REPLACE`
++
++Use the Ruby Resolv library in place of the libc resolver.
++
+ ## `VAGRANT_DISABLE_RESOLV_REPLACE`
+ 
+-Vagrant will automatically load `resolv-replace` to use Ruby's Resolv library
+-in place of the libc resolver. This behavior can be disabled by setting this
+-environment variable.
++Vagrant can optionally use the Ruby Resolv library in place of the libc resolver.
++This can be disabled setting this environment variable.
