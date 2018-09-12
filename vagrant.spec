@@ -4,7 +4,7 @@
 
 Name: vagrant
 Version: 2.0.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Build and distribute virtualized development environments
 Group: Development/Languages
 License: MIT
@@ -35,6 +35,10 @@ Patch1: vagrant-2.0.2-use-numerical-instead-localhost.patch
 # https://github.com/hashicorp/vagrant/pull/9644/commits/30e7e81eab1d7fbb65ceb79afe3133e8df59b1e4
 Patch2: vagrant-2.0.4-Make-resolv-replace-loading-optional.patch
 Patch3: vagrant-2.0.4-Make-resolv-replace-loading-optional-tests.patch
+
+# handle rename of nfs-utils-lib/libnfs-utils in F28
+# https://github.com/hashicorp/vagrant/pull/9935/commits/f0b9d025e481eaf03db9a92ed51f3fe07541fa76
+Patch4: Fixes-the-change-in-packaging-for-nfs-in-f28.patch
 
 Requires: ruby(release)
 Requires: ruby(rubygems) >= 1.3.6
@@ -108,6 +112,7 @@ Documentation for %{name}.
 
 %patch0 -p1
 %patch2 -p1
+%patch4 -p1
 
 %build
 gem build %{name}.gemspec
@@ -262,7 +267,7 @@ begin
 rescue => e
   puts "Vagrant plugin un-register error: #{e}"
 end
- 
+
 %files
 # Explicitly include Vagrant plugins directory strucure to avoid accidentally
 # packaged content.
@@ -320,6 +325,9 @@ end
 
 
 %changelog
+* Wed Sep 12 2018 Tobias Jungel <tobias.jungel@bisdn.de> - 2.0.2-3
+- handle rename of nfs-utils-lib/libnfs-utils in F28 guests (rhbz#1620074).
+
 * Fri Jul 20 2018 Pavel Valena <pvalena@redhat.com> - 2.0.2-2
 - Fix: Make resolv-replace loading optional(rhbz#1605016).
 

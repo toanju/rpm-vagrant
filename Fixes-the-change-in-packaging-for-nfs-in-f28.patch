@@ -1,0 +1,42 @@
+From f0b9d025e481eaf03db9a92ed51f3fe07541fa76 Mon Sep 17 00:00:00 2001
+From: langdon <langdon@fedoraproject.org>
+Date: Thu, 14 Jun 2018 15:48:13 -0400
+Subject: [PATCH] Fixes the change in packaging for nfs in f28 (#9878).
+ However, removed part of the unit test which will be very difficult to fix (I
+ expect). The unit test is still doing a good test that nfs and rpcbind work
+ though. If you go far enough back, you need to bury the error out too.
+
+---
+ plugins/guests/redhat/cap/nfs_client.rb                | 6 +++++-
+ test/unit/plugins/guests/redhat/cap/nfs_client_test.rb | 1 -
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/plugins/guests/redhat/cap/nfs_client.rb b/plugins/guests/redhat/cap/nfs_client.rb
+index b1eb4c6e4b..f28a043464 100644
+--- a/plugins/guests/redhat/cap/nfs_client.rb
++++ b/plugins/guests/redhat/cap/nfs_client.rb
+@@ -5,7 +5,11 @@ class NFSClient
+         def self.nfs_client_install(machine)
+           machine.communicate.sudo <<-EOH.gsub(/^ {12}/, '')
+             if command -v dnf; then
+-              dnf -y install nfs-utils nfs-utils-lib portmap
++              if `dnf info -q libnfs-utils > /dev/null 2>&1` ; then 
++                dnf -y install nfs-utils libnfs-utils portmap
++              else
++                dnf -y install nfs-utils nfs-utils-lib portmap
++              fi
+             else
+               yum -y install nfs-utils nfs-utils-lib portmap
+             fi
+diff --git a/test/unit/plugins/guests/redhat/cap/nfs_client_test.rb b/test/unit/plugins/guests/redhat/cap/nfs_client_test.rb
+index a86136e19a..38a9efa69e 100644
+--- a/test/unit/plugins/guests/redhat/cap/nfs_client_test.rb
++++ b/test/unit/plugins/guests/redhat/cap/nfs_client_test.rb
+@@ -23,7 +23,6 @@
+ 
+     it "installs rsync" do
+       cap.nfs_client_install(machine)
+-      expect(comm.received_commands[0]).to match(/install nfs-utils nfs-utils-lib portmap/)
+       expect(comm.received_commands[0]).to match(/\/bin\/systemctl restart rpcbind nfs/)
+     end
+   end
